@@ -262,7 +262,9 @@ export function WorkspaceSidebar({
                     <div className={cn(
                       "flex size-9 shrink-0 items-center justify-center rounded-full transition-all duration-300",
                       isActive 
-                        ? "bg-[#4F6EF7] text-white shadow-lg shadow-[#4F6EF7]/40" 
+                        ? (feature.type === 'OUTREACH_LOG' 
+                            ? "bg-[#8B5CF6] text-white shadow-lg shadow-[#8B5CF6]/40" 
+                            : "bg-[#10B981] text-white shadow-lg shadow-[#10B981]/40")
                         : "bg-muted text-muted-foreground group-hover:bg-accent-foreground/10"
                     )}>
                       {feature.type === 'OUTREACH_LOG' ? <BarChart3 className="size-4.5" /> : <Check className="size-4.5" />}
@@ -305,9 +307,9 @@ export function WorkspaceSidebar({
                   <div className="p-6 grid gap-3">
                     <button
                       onClick={() => handleAddFeature('TASK_TRACKER', 'Tasks Tracker')}
-                      className="flex items-center gap-4 p-4 rounded-xl border border-border bg-background hover:border-primary/50 hover:bg-primary/5 transition-all text-left group shadow-sm"
+                      className="flex items-center gap-4 p-4 rounded-xl border border-border bg-background hover:border-[#10B981]/50 hover:bg-[#10B981]/5 transition-all text-left group shadow-sm"
                     >
-                      <div className="flex h-11 w-11 items-center justify-center rounded-xl bg-primary/10 text-primary group-hover:bg-primary group-hover:text-primary-foreground transition-colors">
+                      <div className="flex h-11 w-11 items-center justify-center rounded-xl bg-[#10B981]/10 text-[#10B981] group-hover:bg-[#10B981] group-hover:text-white transition-colors">
                         <Check className="h-5 w-5" />
                       </div>
                       <div>
@@ -318,9 +320,9 @@ export function WorkspaceSidebar({
 
                     <button
                       onClick={() => handleAddFeature('OUTREACH_LOG', 'Outreach Log')}
-                      className="flex items-center gap-4 p-4 rounded-xl border border-border bg-background hover:border-primary/50 hover:bg-primary/5 transition-all text-left group shadow-sm"
+                      className="flex items-center gap-4 p-4 rounded-xl border border-border bg-background hover:border-[#8B5CF6]/50 hover:bg-[#8B5CF6]/5 transition-all text-left group shadow-sm"
                     >
-                      <div className="flex h-11 w-11 items-center justify-center rounded-xl bg-chart-3/10 text-chart-3 group-hover:bg-chart-3 group-hover:text-white transition-colors">
+                      <div className="flex h-11 w-11 items-center justify-center rounded-xl bg-[#8B5CF6]/10 text-[#8B5CF6] group-hover:bg-[#8B5CF6] group-hover:text-white transition-colors">
                         <BarChart3 className="h-5 w-5" />
                       </div>
                       <div>
