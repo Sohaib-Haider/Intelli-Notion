@@ -219,7 +219,7 @@ export function OutreachLog({ workspaceId, featureId, currentUser }: { workspace
                         {member.profiles?.full_name?.[0] || 'U'}
                       </AvatarFallback>
                     </Avatar>
-                    <div className="absolute bottom-1 right-1 h-5 w-5 rounded-full border-4 border-white dark:border-zinc-900" style={{ backgroundColor: color }} />
+                    <div className="absolute bottom-1 right-1 h-5 w-5 rounded-full border-4 border-white dark:border-zinc-900 bg-[#10B981]" />
                   </div>
                   <div className="flex-1">
                     <h3 className="font-black text-foreground text-xl leading-tight tracking-tight">{member.profiles?.full_name?.split(' ')[0] || 'Member'}</h3>
