@@ -166,12 +166,12 @@ export function TaskTracker({ workspaceId, featureId, currentUser }: { workspace
 
   return (
     <div className="flex flex-col bg-background text-zinc-900 dark:text-zinc-100 transition-all duration-500">
-      <div className="flex items-center justify-between mb-8">
+      <div className="flex items-center justify-between mb-10">
         <div>
-          <h1 className="text-5xl font-black text-foreground tracking-tighter drop-shadow-sm">Tasks Tracker</h1>
+          <h1 className="text-4xl font-black text-zinc-900 dark:text-zinc-100 tracking-tight">Tasks Tracker</h1>
           <div className="flex items-center gap-2 mt-2">
-            <div className="h-2 w-2 rounded-full bg-primary animate-pulse shadow-[0_0_8px_rgba(79,110,247,0.5)]" />
-            <p className="text-muted-foreground font-bold text-[10px] uppercase tracking-[0.2em]">Active Workspace</p>
+            <div className="h-2 w-2 rounded-full bg-emerald-500 animate-pulse" />
+            <p className="text-zinc-500 dark:text-zinc-400 font-bold text-xs uppercase tracking-widest">Active Workspace</p>
           </div>
         </div>
         <div className="flex items-center gap-3">
