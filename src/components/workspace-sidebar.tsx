@@ -115,8 +115,7 @@ export function WorkspaceSidebar({
   }
 
   return (
-    <Sidebar collapsible="icon" className="border-none bg-transparent transition-all duration-300 p-3">
-      <div className="flex flex-col h-full bg-card text-card-foreground rounded-2xl overflow-hidden shadow-lg border border-border">
+    <Sidebar collapsible="icon" className="p-3 bg-transparent border-none">
       {/* Create Workspace modal */}
       <Dialog open={isWorkspaceModalOpen} onOpenChange={setIsWorkspaceModalOpen}>
         <DialogContent className="sm:max-w-[425px] bg-card border border-border text-card-foreground rounded-2xl">
@@ -151,8 +150,7 @@ export function WorkspaceSidebar({
         </DialogContent>
       </Dialog>
 
-      {/* Workspace selector header */}
-      <SidebarHeader className="pb-2">
+      <SidebarHeader className="bg-card rounded-t-2xl border-x border-t border-border pb-2 px-3 group-data-[collapsible=icon]:px-0 group-data-[collapsible=icon]:items-center">
         <SidebarMenu>
           <SidebarMenuItem>
             <DropdownMenu>
@@ -164,8 +162,8 @@ export function WorkspaceSidebar({
                   />
                 }
               >
-                <div className="flex aspect-square size-8 items-center justify-center rounded-xl bg-primary text-primary-foreground shadow-sm">
-                  <SquareTerminal className="size-4" />
+                <div className="flex aspect-square size-9 items-center justify-center rounded-xl bg-primary text-primary-foreground shadow-sm shrink-0 mx-auto">
+                  <SquareTerminal className="size-5" />
                 </div>
                 <div className="grid flex-1 text-left text-sm leading-tight group-data-[collapsible=icon]:hidden">
                   <span className="truncate font-semibold text-foreground">
@@ -213,7 +211,8 @@ export function WorkspaceSidebar({
         </SidebarMenu>
       </SidebarHeader>
 
-      <SidebarContent>
+      <SidebarContent className="bg-card border-x border-border group-data-[collapsible=icon]:px-0 px-0">
+        <div className="flex flex-col h-full">
         {workspaces.length === 0 && (
           <div className="px-4 py-8 text-center space-y-4">
             <div className="mx-auto w-12 h-12 rounded-2xl bg-muted border border-border flex items-center justify-center">
@@ -234,7 +233,7 @@ export function WorkspaceSidebar({
         )}
 
         {activeWorkspace && (
-          <SidebarMenu className="mt-2 px-3 space-y-1">
+          <SidebarMenu className="mt-2 px-3 space-y-2 group-data-[collapsible=icon]:px-0">
             <div className="mb-1 px-2 text-[10px] font-bold uppercase tracking-[0.15em] text-muted-foreground group-data-[collapsible=icon]:hidden">
               Features
             </div>
@@ -248,14 +247,14 @@ export function WorkspaceSidebar({
                     isActive={isActive}
                     tooltip={feature.title}
                     className={cn(
-                      "group/menu-button flex h-12 items-center gap-3 rounded-xl px-2 transition-all duration-200 font-medium text-sm",
+                      "group/menu-button flex h-14 items-center gap-3 rounded-xl px-2 transition-all duration-200 font-medium text-sm group-data-[collapsible=icon]:justify-center group-data-[collapsible=icon]:px-0 group-data-[collapsible=icon]:h-14",
                       isActive
                         ? "bg-primary/10 text-primary font-semibold"
                         : "text-foreground hover:bg-accent hover:text-foreground"
                     )}
                   >
                     <div className={cn(
-                      "flex size-10 shrink-0 items-center justify-center rounded-full transition-all duration-300",
+                      "flex size-10 shrink-0 items-center justify-center rounded-full transition-all duration-300 mx-auto",
                       isActive 
                         ? "bg-[#4F6EF7] text-white shadow-lg shadow-[#4F6EF7]/40" 
                         : "bg-muted text-muted-foreground group-hover:bg-accent-foreground/10"
@@ -331,20 +330,21 @@ export function WorkspaceSidebar({
               <SidebarMenuButton
                 render={
                   <a href={`/dashboard/${activeWorkspace.id}/settings`}>
-                    <Settings className="size-4" />
+                     <div className="flex size-9 shrink-0 items-center justify-center rounded-full bg-muted text-muted-foreground group-hover:bg-accent transition-all mx-auto">
+                      <Settings className="size-5" />
+                    </div>
                     <span className="group-data-[collapsible=icon]:hidden">Settings</span>
                     <ChevronRight className="ml-auto size-3.5 text-muted-foreground group-data-[collapsible=icon]:hidden" />
                   </a>
                 }
-                className="h-10 rounded-full text-muted-foreground hover:bg-accent hover:text-foreground transition-colors font-medium text-sm"
+                className="h-12 rounded-xl text-muted-foreground hover:bg-accent hover:text-foreground transition-colors font-medium text-sm group-data-[collapsible=icon]:px-0 group-data-[collapsible=icon]:justify-center"
               />
             </SidebarMenuItem>
           </SidebarMenu>
         )}
       </SidebarContent>
 
-      {/* User menu footer */}
-      <SidebarFooter className="pt-2">
+      <SidebarFooter className="bg-card rounded-b-2xl border-x border-b border-border pt-2 px-3 group-data-[collapsible=icon]:px-0">
         <SidebarMenu>
           <SidebarMenuItem>
             <DropdownMenu>
@@ -353,8 +353,8 @@ export function WorkspaceSidebar({
                   size="lg"
                   className="rounded-xl data-[state=open]:bg-accent hover:bg-accent transition-colors"
                 >
-                  <Avatar className="h-8 w-8 rounded-xl">
-                    <AvatarFallback className="rounded-xl bg-primary text-primary-foreground font-bold text-sm">
+                  <Avatar className="h-9 w-9 rounded-full shrink-0 mx-auto transition-all duration-300">
+                    <AvatarFallback className="rounded-full bg-primary text-primary-foreground font-bold text-sm shadow-md">
                       {(user?.user_metadata?.full_name || user?.email)?.charAt(0).toUpperCase()}
                     </AvatarFallback>
                   </Avatar>
