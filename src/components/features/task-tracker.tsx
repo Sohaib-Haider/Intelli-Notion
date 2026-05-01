@@ -636,7 +636,7 @@ export function TaskTracker({ workspaceId, featureId, currentUser }: { workspace
                         <span className="text-6xl font-black text-[#4F6EF7] leading-none">
                           {tasks.filter(t => isSameDay(new Date(t.created_at), selectedDate)).length}
                         </span>
-                        <span className="text-[10px] font-black uppercase tracking-[0.2em] text-zinc-400 mt-1">Tasks Today</span>
+                        <span className="text-[10px] font-black uppercase tracking-[0.2em] text-zinc-400 mt-1">Scheduled Tasks</span>
                       </div>
                       </div>
                     </div>
