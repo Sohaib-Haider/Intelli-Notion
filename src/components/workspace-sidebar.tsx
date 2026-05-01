@@ -58,7 +58,12 @@ export function WorkspaceSidebar({
   const [isWorkspaceModalOpen, setIsWorkspaceModalOpen] = React.useState(false)
   const [isFeatureModalOpen, setIsFeatureModalOpen] = React.useState(false)
   const [isLoading, setIsLoading] = React.useState(false)
+  const [mounted, setMounted] = React.useState(false)
   const { theme, setTheme } = useTheme()
+
+  React.useEffect(() => {
+    setMounted(true)
+  }, [])
 
   React.useEffect(() => {
     if (activeWorkspace) {
@@ -399,8 +404,12 @@ export function WorkspaceSidebar({
                     onClick={() => setTheme(theme === 'dark' ? 'light' : 'dark')}
                     className="gap-2 p-2 hover:bg-accent focus:bg-accent cursor-pointer rounded-lg text-foreground text-sm"
                   >
-                    {theme === 'dark' ? <Sun className="size-4 text-primary" /> : <Moon className="size-4 text-primary" />}
-                    <span>{theme === 'dark' ? 'Light Mode' : 'Dark Mode'}</span>
+                    {mounted ? (
+                      theme === 'dark' ? <Sun className="size-4 text-primary" /> : <Moon className="size-4 text-primary" />
+                    ) : (
+                      <div className="size-4" />
+                    )}
+                    <span>{mounted ? (theme === 'dark' ? 'Light Mode' : 'Dark Mode') : 'Loading Theme...'}</span>
                   </DropdownMenuItem>
                 </DropdownMenuGroup>
                 <DropdownMenuSeparator className="bg-border" />
