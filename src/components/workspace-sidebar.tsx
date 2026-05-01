@@ -162,14 +162,14 @@ export function WorkspaceSidebar({
                   />
                 }
               >
-                <div className="flex aspect-square size-10 items-center justify-center rounded-full bg-primary text-primary-foreground shadow-lg shadow-primary/20 shrink-0">
-                  <SquareTerminal className="size-6" />
+                <div className="flex aspect-square size-9 items-center justify-center rounded-full bg-primary text-primary-foreground shadow-lg shadow-primary/20 shrink-0">
+                  <SquareTerminal className="size-5" />
                 </div>
                 <div className="grid flex-1 text-left text-sm leading-tight group-data-[collapsible=icon]:hidden">
-                  <span className="truncate font-semibold text-foreground">
+                  <span className="truncate font-bold tracking-tight text-foreground">
                     {activeWorkspace?.name || "Select Workspace"}
                   </span>
-                  <span className="truncate text-xs text-muted-foreground">Free Plan</span>
+                  <span className="truncate text-[10px] font-semibold text-muted-foreground uppercase tracking-wider">Free Plan</span>
                 </div>
                 <ChevronsUpDown className="ml-auto size-4 text-muted-foreground group-data-[collapsible=icon]:hidden" />
               </DropdownMenuTrigger>
@@ -255,14 +255,14 @@ export function WorkspaceSidebar({
                     )}
                   >
                     <div className={cn(
-                      "flex size-10 shrink-0 items-center justify-center rounded-full transition-all duration-300",
+                      "flex size-9 shrink-0 items-center justify-center rounded-full transition-all duration-300",
                       isActive 
                         ? "bg-[#4F6EF7] text-white shadow-lg shadow-[#4F6EF7]/40" 
                         : "bg-muted text-muted-foreground group-hover:bg-accent-foreground/10"
                     )}>
-                      {feature.type === 'OUTREACH_LOG' ? <BarChart3 className="size-5" /> : <SquareTerminal className="size-5" />}
+                      {feature.type === 'OUTREACH_LOG' ? <BarChart3 className="size-4.5" /> : <SquareTerminal className="size-4.5" />}
                     </div>
-                    <span className="flex-1 group-data-[collapsible=icon]:hidden whitespace-nowrap overflow-hidden">{feature.title}</span>
+                    <span className="flex-1 group-data-[collapsible=icon]:hidden whitespace-nowrap overflow-hidden font-bold tracking-tight text-sm">{feature.title}</span>
                     {isActive && (
                       <span className="flex h-5 min-w-5 items-center justify-center rounded-md bg-primary px-1.5 text-[10px] font-bold text-primary-foreground tabular-nums group-data-[collapsible=icon]:hidden">
                         ✓
@@ -286,12 +286,12 @@ export function WorkspaceSidebar({
               <Dialog open={isFeatureModalOpen} onOpenChange={setIsFeatureModalOpen}>
                 <DialogTrigger render={
                   <SidebarMenuButton 
-                    className="h-14 rounded-xl hover:bg-accent text-muted-foreground hover:text-primary transition-all text-sm font-medium group-data-[collapsible=icon]:justify-center group-data-[collapsible=icon]:px-0" 
+                    className="h-12 rounded-xl hover:bg-accent text-muted-foreground hover:text-primary transition-all text-sm font-medium group-data-[collapsible=icon]:justify-center group-data-[collapsible=icon]:px-0" 
                   >
-                    <div className="flex size-10 shrink-0 items-center justify-center rounded-full bg-muted/50 text-muted-foreground group-hover:bg-primary/10 group-hover:text-primary transition-all">
-                      <Plus className="size-5" />
+                    <div className="flex size-9 shrink-0 items-center justify-center rounded-full bg-muted/50 text-muted-foreground group-hover:bg-primary/10 group-hover:text-primary transition-all">
+                      <Plus className="size-4.5" />
                     </div>
-                    <span className="group-data-[collapsible=icon]:hidden ml-3">Add Feature</span>
+                    <span className="group-data-[collapsible=icon]:hidden ml-3 font-bold tracking-tight">Add Feature</span>
                   </SidebarMenuButton>
                 }>
                 </DialogTrigger>
@@ -339,14 +339,14 @@ export function WorkspaceSidebar({
               <SidebarMenuButton
                 render={
                   <a href={`/dashboard/${activeWorkspace.id}/settings`} className="flex items-center w-full">
-                     <div className="flex size-10 shrink-0 items-center justify-center rounded-full bg-muted/50 text-muted-foreground group-hover:bg-accent transition-all">
-                      <Settings className="size-5" />
+                     <div className="flex size-9 shrink-0 items-center justify-center rounded-full bg-muted/50 text-muted-foreground group-hover:bg-accent transition-all">
+                      <Settings className="size-4.5" />
                     </div>
-                    <span className="group-data-[collapsible=icon]:hidden ml-3">Settings</span>
+                    <span className="group-data-[collapsible=icon]:hidden ml-3 font-bold tracking-tight">Settings</span>
                     <ChevronRight className="ml-auto size-3.5 text-muted-foreground group-data-[collapsible=icon]:hidden" />
                   </a>
                 }
-                className="h-14 rounded-xl text-muted-foreground hover:bg-accent hover:text-foreground transition-colors font-medium text-sm group-data-[collapsible=icon]:px-0 group-data-[collapsible=icon]:justify-center"
+                className="h-12 rounded-xl text-muted-foreground hover:bg-accent hover:text-foreground transition-colors font-medium text-sm group-data-[collapsible=icon]:px-0 group-data-[collapsible=icon]:justify-center"
               />
             </SidebarMenuItem>
             </SidebarMenu>
@@ -364,7 +364,7 @@ export function WorkspaceSidebar({
                   size="lg"
                   className="rounded-xl data-[state=open]:bg-accent hover:bg-accent transition-colors group-data-[collapsible=icon]:justify-center group-data-[collapsible=icon]:px-0"
                 >
-                  <Avatar className="h-10 w-10 rounded-full shrink-0 mx-auto transition-all duration-300 border-2 border-border shadow-sm">
+                  <Avatar className="h-9 w-9 rounded-full shrink-0 mx-auto transition-all duration-300 border-2 border-border shadow-sm">
                     <AvatarFallback className="rounded-full bg-primary text-primary-foreground font-bold text-sm shadow-md">
                       {(user?.user_metadata?.full_name || user?.email)?.charAt(0).toUpperCase()}
                     </AvatarFallback>
