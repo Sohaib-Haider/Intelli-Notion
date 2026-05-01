@@ -251,7 +251,7 @@ export function OutreachLog({ workspaceId, featureId, currentUser }: { workspace
 
         <div className="mt-12 space-y-6">
           <h2 className="text-xl font-black text-foreground flex items-center gap-3">
-             <BarChart3 className="h-6 w-6 text-primary" /> Outreach feed
+             <BarChart3 className="h-6 w-6 text-purple-500" /> Outreach feed
           </h2>
           <div className="space-y-6">
             {logs.map(log => {
