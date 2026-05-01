@@ -203,7 +203,7 @@ export function OutreachLog({ workspaceId, featureId, currentUser }: { workspace
           <div className="absolute bottom-[-50%] left-[-10%] w-60 h-60 bg-blue-400/20 rounded-full blur-3xl pointer-events-none" />
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-8">
+        <div className="flex flex-wrap gap-8">
           {members.map(member => {
             const memberThisWeekLogs = thisWeekLogs.filter(log => log.member_id === member.user_id)
             const memberTotal = memberThisWeekLogs.reduce((acc, log) => acc + log.count, 0)
@@ -211,7 +211,7 @@ export function OutreachLog({ workspaceId, featureId, currentUser }: { workspace
             const color = getMemberColor(member.user_id)
 
             return (
-              <div key={member.user_id} className="bg-card p-8 rounded-[32px] border border-border shadow-sm hover:shadow-md transition-all group">
+              <div key={member.user_id} className="flex-1 min-w-[320px] max-w-full bg-card p-10 rounded-[32px] border border-border shadow-sm hover:shadow-md transition-all group flex flex-col justify-between">
                 <div className="flex items-center gap-5 mb-10">
                   <div className="relative">
                     <Avatar className="h-20 w-20 border-8 border-zinc-50 dark:border-zinc-800 shadow-sm transition-transform duration-500 group-hover:scale-110">
