@@ -632,9 +632,12 @@ export function TaskTracker({ workspaceId, featureId, currentUser }: { workspace
                         <p className="text-muted-foreground font-medium">{format(selectedDate, 'MMMM do, yyyy')}</p>
                       </div>
                       <div className="text-right">
-                        <span className="text-5xl font-black text-muted-foreground/30">
-                          {tasks.filter(t => isSameDay(new Date(t.created_at), selectedDate)).length} Tasks
+                      <div className="flex flex-col items-end">
+                        <span className="text-6xl font-black text-[#4F6EF7] leading-none">
+                          {tasks.filter(t => isSameDay(new Date(t.created_at), selectedDate)).length}
                         </span>
+                        <span className="text-[10px] font-black uppercase tracking-[0.2em] text-zinc-400 mt-1">Tasks Today</span>
+                      </div>
                       </div>
                     </div>
 
@@ -720,9 +723,9 @@ export function TaskTracker({ workspaceId, featureId, currentUser }: { workspace
                             isSameDay(day, new Date()) ? "text-[#4F6EF7]" : "text-foreground"
                           )}>{format(day, 'MMM d')}</span>
                         </div>
-                        <Badge variant="outline" className="bg-muted border-border text-muted-foreground px-3 py-1 font-bold">
+                        <div className="h-7 w-7 rounded-full bg-[#4F6EF7] flex items-center justify-center text-white text-xs font-black shadow-lg shadow-blue-500/20">
                           {tasks.filter(t => isSameDay(new Date(t.created_at), day)).length}
-                        </Badge>
+                        </div>
                       </div>
                       <div className="flex-1 p-6 space-y-4 bg-background">
                         {tasks.filter(t => isSameDay(new Date(t.created_at), day)).map(task => (
