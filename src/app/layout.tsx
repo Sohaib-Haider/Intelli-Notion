@@ -26,8 +26,8 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en" className={`${plusJakartaSans.variable} ${jetbrainsMono.variable} h-full antialiased`}>
-      <body className="font-sans min-h-full flex flex-col bg-zinc-50 dark:bg-[#0d0d0d] text-zinc-900 dark:text-zinc-50 transition-colors duration-300">
+    <html lang="en" suppressHydrationWarning className={`${plusJakartaSans.variable} ${jetbrainsMono.variable} h-full antialiased`}>
+      <body className="font-sans min-h-full flex flex-col bg-background text-foreground">
         <ThemeProvider>
           <TooltipProvider>{children}</TooltipProvider>
         </ThemeProvider>

@@ -1,6 +1,7 @@
 'use client'
 
 import * as React from "react"
+import Link from "next/link"
 import { useParams, useRouter } from "next/navigation"
 import { Check, ChevronsUpDown, Plus, SquareTerminal, Loader2, LogOut, Settings, Trash2, Sun, Moon, BarChart3, ChevronRight } from "lucide-react"
 import { useTheme } from "@/components/theme-provider"
@@ -243,7 +244,7 @@ export function WorkspaceSidebar({
               return (
                 <SidebarMenuItem key={feature.id}>
                   <SidebarMenuButton
-                    render={<a href={`/dashboard/${activeWorkspace.id}/${feature.id}`} />}
+                    render={<Link href={`/dashboard/${activeWorkspace.id}/${feature.id}`} />}
                     isActive={isActive}
                     tooltip={feature.title}
                     className={cn(
@@ -332,13 +333,13 @@ export function WorkspaceSidebar({
             <SidebarMenuItem>
               <SidebarMenuButton
                 render={
-                  <a href={`/dashboard/${activeWorkspace.id}/settings`} className="flex items-center w-full">
+                  <Link href={`/dashboard/${activeWorkspace.id}/settings`} className="flex items-center w-full">
                      <div className="flex size-9 shrink-0 items-center justify-center rounded-full bg-muted/50 text-muted-foreground group-hover:bg-accent transition-all">
                       <Settings className="size-4.5" />
                     </div>
                     <span className="group-data-[collapsible=icon]:hidden ml-3 font-bold tracking-tight">Settings</span>
                     <ChevronRight className="ml-auto size-3.5 text-muted-foreground group-data-[collapsible=icon]:hidden" />
-                  </a>
+                  </Link>
                 }
                 className="h-12 rounded-xl text-muted-foreground hover:bg-accent hover:text-foreground transition-colors font-medium text-sm group-data-[collapsible=icon]:px-0 group-data-[collapsible=icon]:justify-center"
               />
