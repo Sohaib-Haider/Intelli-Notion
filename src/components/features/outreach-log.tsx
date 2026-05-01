@@ -233,7 +233,7 @@ export function OutreachLog({ workspaceId, featureId, currentUser }: { workspace
                       <span className="text-4xl sm:text-5xl font-black text-foreground tabular-nums">{memberTotal}</span>
                       <span className="text-xs font-bold text-muted-foreground ml-2 whitespace-nowrap uppercase tracking-tighter">reached</span>
                     </div>
-                    <div className="text-xs font-black text-primary bg-primary/10 px-2.5 py-1.5 rounded-xl border border-primary/20 whitespace-nowrap">
+                    <div className="text-xs font-black text-emerald-600 dark:text-emerald-400 bg-emerald-50 dark:bg-emerald-500/10 px-2.5 py-1.5 rounded-xl border border-emerald-100 dark:border-emerald-500/20 whitespace-nowrap">
                       {share}%
                     </div>
                   </div>
@@ -279,7 +279,7 @@ export function OutreachLog({ workspaceId, featureId, currentUser }: { workspace
                         {getChannelIcon(log.channel)}
                         <span className="text-xs font-bold text-muted-foreground">{log.channel}</span>
                       </div>
-                      <span className="text-sm font-black text-primary bg-primary/10 px-4 py-2 rounded-[16px] border border-primary/20">+{log.count} reached</span>
+                      <span className="text-sm font-black text-emerald-600 dark:text-emerald-400 bg-emerald-50 dark:bg-emerald-500/10 px-4 py-2 rounded-[16px] border border-emerald-100 dark:border-emerald-500/20">+{log.count} reached</span>
                     </div>
                     {log.note && (
                       <div className="bg-muted/30 p-6 rounded-[24px] border border-border italic text-muted-foreground text-sm leading-relaxed shadow-inner">
