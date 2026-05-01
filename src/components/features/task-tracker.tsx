@@ -129,25 +129,25 @@ export function TaskTracker({ workspaceId, featureId, currentUser }: { workspace
   const getStatusBadge = (status: string) => {
     switch (status) {
       case 'Done':
-        return <Badge variant="outline" className="bg-emerald-500/10 text-emerald-400 border-emerald-500/20"><CheckCircle2 className="mr-1 h-3 w-3" /> Done</Badge>
+        return <Badge variant="outline" className="bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border-emerald-500/20"><CheckCircle2 className="mr-1 h-3 w-3" /> Done</Badge>
       case 'In progress':
-        return <Badge variant="outline" className="bg-blue-500/10 text-blue-400 border-blue-500/20"><Clock className="mr-1 h-3 w-3" /> In progress</Badge>
+        return <Badge variant="outline" className="bg-[#4F6EF7]/10 text-[#4F6EF7] border-[#4F6EF7]/20"><Clock className="mr-1 h-3 w-3" /> In progress</Badge>
       default:
-        return <Badge variant="outline" className="bg-zinc-800 text-zinc-400 border-zinc-700"><Circle className="mr-1 h-3 w-3" /> Not started</Badge>
+        return <Badge variant="outline" className="bg-muted text-muted-foreground border-border"><Circle className="mr-1 h-3 w-3" /> Not started</Badge>
     }
   }
 
   const getUserColor = (userId: string) => {
-    if (!userId) return 'bg-zinc-800 text-zinc-400'
+    if (!userId) return 'bg-muted text-muted-foreground'
     const colors = [
-      'bg-red-500/10 text-red-400 border border-red-500/20',
-      'bg-blue-500/10 text-blue-400 border border-blue-500/20',
-      'bg-emerald-500/10 text-emerald-400 border border-emerald-500/20',
-      'bg-purple-500/10 text-purple-400 border border-purple-500/20',
-      'bg-yellow-500/10 text-yellow-400 border border-yellow-500/20',
-      'bg-pink-500/10 text-pink-400 border border-pink-500/20',
-      'bg-cyan-500/10 text-cyan-400 border border-cyan-500/20',
-      'bg-orange-500/10 text-orange-400 border border-orange-500/20',
+      'bg-red-500/10 text-red-600 dark:text-red-400 border border-red-500/20',
+      'bg-[#4F6EF7]/10 text-[#4F6EF7] border border-[#4F6EF7]/20',
+      'bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border border-emerald-500/20',
+      'bg-purple-500/10 text-purple-600 dark:text-purple-400 border border-purple-500/20',
+      'bg-yellow-500/10 text-yellow-600 dark:text-yellow-400 border border-yellow-500/20',
+      'bg-pink-500/10 text-pink-600 dark:text-pink-400 border border-pink-500/20',
+      'bg-[#4F6EF7]/10 text-[#4F6EF7] border border-[#4F6EF7]/20',
+      'bg-orange-500/10 text-orange-600 dark:text-orange-400 border border-orange-500/20',
     ]
     const index = userId.split('').reduce((acc, char) => acc + char.charCodeAt(0), 0) % colors.length
     return colors[index]
@@ -322,10 +322,10 @@ export function TaskTracker({ workspaceId, featureId, currentUser }: { workspace
                     </TableCell>
                     <TableCell>
                       <Select value={task.status} onValueChange={(val) => handleStatusChange(task.id, val)}>
-                        <SelectTrigger hideIcon className="bg-transparent border-0 h-auto p-0 hover:bg-zinc-800/50 focus:ring-0">
+                        <SelectTrigger hideIcon className="bg-transparent border-0 h-auto p-0 hover:bg-muted/50 focus:ring-0">
                           {getStatusBadge(task.status)}
                         </SelectTrigger>
-                        <SelectContent className="bg-zinc-900 border-zinc-800 text-zinc-100">
+                        <SelectContent className="bg-card border-border text-foreground">
                           <SelectItem value="Not started">Not started</SelectItem>
                           <SelectItem value="In progress">In progress</SelectItem>
                           <SelectItem value="Done">Done</SelectItem>
@@ -334,7 +334,7 @@ export function TaskTracker({ workspaceId, featureId, currentUser }: { workspace
                     </TableCell>
                     <TableCell>
                       <Popover>
-                        <PopoverTrigger className="flex h-auto p-1 hover:bg-zinc-800/50 justify-start w-full rounded-md border-0 items-center bg-transparent text-sm">
+                        <PopoverTrigger className="flex h-auto p-1 hover:bg-muted justify-start w-full rounded-md border-0 items-center bg-transparent text-sm">
                           {task.assignee_ids && task.assignee_ids.length > 0 ? (
                             <div className="flex gap-1 overflow-x-auto scrollbar-hide max-w-[150px] items-center">
                               {task.assignee_ids.map((id: string) => {
@@ -351,19 +351,19 @@ export function TaskTracker({ workspaceId, featureId, currentUser }: { workspace
                             <span className="text-zinc-500 text-sm">Unassigned</span>
                           )}
                         </PopoverTrigger>
-                        <PopoverContent className="w-64 p-0 bg-zinc-900 border-zinc-800">
+                        <PopoverContent className="w-64 p-0 bg-card border-border">
                           <div className="p-2 space-y-1">
                             {members.map(m => {
                               const isSelected = (task.assignee_ids || []).includes(m.user_id)
                               return (
-                                <div key={m.user_id} className="flex items-center space-x-2 p-2 hover:bg-zinc-800 rounded-md cursor-pointer" onClick={() => {
+                                <div key={m.user_id} className="flex items-center space-x-2 p-2 hover:bg-muted rounded-md cursor-pointer" onClick={() => {
                                   const newIds = isSelected 
                                     ? (task.assignee_ids || []).filter((id: string) => id !== m.user_id)
                                     : [...(task.assignee_ids || []), m.user_id]
                                   handleAssigneesChange(task.id, newIds)
                                 }}>
-                                  <Checkbox checked={isSelected} className="border-zinc-500 data-[state=checked]:bg-blue-600 data-[state=checked]:border-blue-600 pointer-events-none" />
-                                  <span className="text-sm text-zinc-300 flex-1">{m.user_id === currentUser.id ? 'Me' : (m.profiles?.full_name || `User ${m.user_id.substring(0,4)}`)}</span>
+                                  <Checkbox checked={isSelected} className="border-border data-[state=checked]:bg-[#4F6EF7] data-[state=checked]:border-[#4F6EF7] pointer-events-none" />
+                                  <span className="text-sm text-foreground flex-1">{m.user_id === currentUser.id ? 'Me' : (m.profiles?.full_name || `User ${m.user_id.substring(0,4)}`)}</span>
                                 </div>
                               )
                             })}
@@ -411,7 +411,7 @@ export function TaskTracker({ workspaceId, featureId, currentUser }: { workspace
                         className="flex items-start justify-between mb-3 cursor-pointer"
                         onClick={() => setSelectedTask(task)}
                       >
-                        <h4 className="text-sm font-medium text-zinc-100 hover:text-blue-400 transition-colors">{task.title}</h4>
+                        <h4 className="text-sm font-semibold text-foreground hover:text-[#4F6EF7] transition-colors">{task.title}</h4>
                         <Button 
                           variant="ghost" 
                           size="icon" 
@@ -428,19 +428,19 @@ export function TaskTracker({ workspaceId, featureId, currentUser }: { workspace
                         {task.assignee_id ? (
                           <div className="flex items-center gap-2">
                             <Avatar className="h-5 w-5">
-                              <AvatarFallback className="bg-zinc-800 text-[10px]">U</AvatarFallback>
+                              <AvatarFallback className="bg-muted text-muted-foreground text-[10px]">U</AvatarFallback>
                             </Avatar>
-                            <span className="text-xs text-zinc-400">
+                            <span className="text-xs text-muted-foreground">
                               {task.assignee_id === currentUser.id ? 'Me' : (task.profiles?.full_name || 'User')}
                             </span>
                           </div>
                         ) : <div />}
-                        <span className="text-xs text-zinc-500">{format(new Date(task.created_at), 'MMM d')}</span>
+                        <span className="text-xs text-muted-foreground">{format(new Date(task.created_at), 'MMM d')}</span>
 
                       </div>
                     </div>
                   ))}
-                  <Button variant="ghost" className="w-full text-zinc-500 hover:text-zinc-300 hover:bg-zinc-800/50 justify-start" onClick={() => {
+                  <Button variant="ghost" className="w-full text-muted-foreground hover:text-foreground hover:bg-muted/60 justify-start" onClick={() => {
                     setNewTaskStatus(columnStatus)
                     setIsNewTaskOpen(true)
                   }}>
@@ -453,35 +453,35 @@ export function TaskTracker({ workspaceId, featureId, currentUser }: { workspace
         </TabsContent>
 
         <TabsContent value="me" className="flex-1 mt-4">
-          <div className="rounded-md border border-zinc-800 bg-zinc-900/50">
+          <div className="rounded-xl border border-border bg-card shadow-sm overflow-hidden">
             <Table>
               <TableHeader>
-                <TableRow className="border-zinc-800 hover:bg-transparent">
-                  <TableHead className="text-zinc-400 font-medium">Task name</TableHead>
-                  <TableHead className="text-zinc-400 font-medium">Status</TableHead>
-                  <TableHead className="text-zinc-400 font-medium">Date</TableHead>
+                <TableRow className="border-border bg-muted/50 hover:bg-transparent">
+                  <TableHead className="text-muted-foreground font-semibold">Task name</TableHead>
+                  <TableHead className="text-muted-foreground font-semibold">Status</TableHead>
+                  <TableHead className="text-muted-foreground font-semibold">Date</TableHead>
                 </TableRow>
               </TableHeader>
               <TableBody>
                 {tasks.filter(t => t.assignee_id === currentUser?.id).map((task) => (
-                  <TableRow key={task.id} className="border-zinc-800 hover:bg-zinc-800/50">
-                    <TableCell className="font-medium text-zinc-100">
+                  <TableRow key={task.id} className="border-border hover:bg-muted/40 transition-colors">
+                    <TableCell className="font-semibold text-foreground">
                       <button 
                         onClick={() => setSelectedTask(task)}
-                        className="hover:text-blue-400 transition-colors"
+                        className="hover:text-[#4F6EF7] transition-colors"
                       >
                         {task.title}
                       </button>
                     </TableCell>
                     <TableCell>{getStatusBadge(task.status)}</TableCell>
-                    <TableCell className="text-zinc-400 text-sm">
+                    <TableCell className="text-muted-foreground text-sm">
                       {format(new Date(task.created_at), 'MMM d, yyyy')}
                     </TableCell>
                   </TableRow>
                 ))}
                 {tasks.filter(t => t.assignee_id === currentUser?.id).length === 0 && (
                   <TableRow className="hover:bg-transparent">
-                    <TableCell colSpan={3} className="text-center text-zinc-500 py-8">
+                    <TableCell colSpan={3} className="text-center text-muted-foreground py-8">
                       No tasks assigned to you.
                     </TableCell>
                   </TableRow>
@@ -494,35 +494,35 @@ export function TaskTracker({ workspaceId, featureId, currentUser }: { workspace
         <TabsContent value="checklist" className="flex-1 mt-4">
           <div className="max-w-3xl space-y-2">
             {tasks.map(task => (
-              <div key={task.id} className="flex items-center gap-3 p-2 rounded-md hover:bg-zinc-900/50 group">
+              <div key={task.id} className="flex items-center gap-3 p-3 rounded-xl border border-border bg-card hover:bg-muted/40 group transition-colors">
                 <Checkbox 
                   checked={task.status === 'Done'}
                   onCheckedChange={(checked) => handleStatusChange(task.id, checked ? 'Done' : 'Not started')}
-                  className="border-zinc-600 data-[state=checked]:bg-emerald-500 data-[state=checked]:border-emerald-500"
+                  className="border-border data-[state=checked]:bg-[#4F6EF7] data-[state=checked]:border-[#4F6EF7]"
                 />
                 {getStatusBadge(task.status)}
                 <span className={cn(
-                  "text-sm flex-1",
-                  task.status === 'Done' ? "text-zinc-500 line-through" : "text-zinc-200"
+                  "text-sm flex-1 text-foreground",
+                  task.status === 'Done' ? "text-muted-foreground line-through" : ""
                 )}>
                   {task.title}
                 </span>
               </div>
             ))}
-            <Button variant="ghost" className="text-zinc-500 hover:text-zinc-300 hover:bg-zinc-800/50 mt-2 px-2" onClick={() => setIsNewTaskOpen(true)}>
+            <Button variant="ghost" className="text-muted-foreground hover:text-foreground hover:bg-muted/60 mt-2 px-2" onClick={() => setIsNewTaskOpen(true)}>
               <Plus className="mr-2 h-4 w-4" /> New task
             </Button>
           </div>
         </TabsContent>
 
         <TabsContent value="calendar" className="flex-1 mt-4">
-          <div className="flex flex-col h-full bg-[#0d0d0d] border border-zinc-800/50 rounded-2xl overflow-hidden shadow-2xl">
-            <div className="flex items-center justify-between p-6 border-b border-zinc-800/50 bg-[#121212]/50 backdrop-blur-md">
+          <div className="flex flex-col h-full bg-card border border-border rounded-2xl overflow-hidden shadow-sm">
+            <div className="flex items-center justify-between p-6 border-b border-border bg-muted/30">
               <div className="flex items-center gap-4">
-                <h3 className="text-2xl font-bold text-zinc-100 tracking-tight">
-                  {format(currentDate, 'MMMM')} <span className="text-zinc-500 font-medium">{format(currentDate, 'yyyy')}</span>
+                <h3 className="text-2xl font-bold text-foreground tracking-tight">
+                  {format(currentDate, 'MMMM')} <span className="text-muted-foreground font-medium">{format(currentDate, 'yyyy')}</span>
                 </h3>
-                <div className="flex bg-zinc-900 rounded-lg p-1 border border-zinc-800">
+                <div className="flex bg-muted rounded-lg p-1 border border-border">
                   <Button 
                     variant={calendarView === 'day' ? 'secondary' : 'ghost'} 
                     size="sm" 
@@ -549,14 +549,14 @@ export function TaskTracker({ workspaceId, featureId, currentUser }: { workspace
                   </Button>
                 </div>
               </div>
-              <div className="flex items-center gap-3 bg-zinc-900/80 p-1 rounded-xl border border-zinc-800/50">
-                <Button variant="ghost" size="icon" className="h-8 w-8 hover:bg-zinc-800" onClick={() => setCurrentDate(subMonths(currentDate, 1))}>
+              <div className="flex items-center gap-3 bg-muted/50 p-1 rounded-xl border border-border">
+                <Button variant="ghost" size="icon" className="h-8 w-8 hover:bg-muted" onClick={() => setCurrentDate(subMonths(currentDate, 1))}>
                   <ChevronLeft className="h-4 w-4" />
                 </Button>
-                <Button variant="ghost" size="sm" className="h-8 px-4 text-xs font-semibold hover:bg-zinc-800" onClick={() => setCurrentDate(new Date())}>
+                <Button variant="ghost" size="sm" className="h-8 px-4 text-xs font-semibold hover:bg-muted" onClick={() => setCurrentDate(new Date())}>
                   Today
                 </Button>
-                <Button variant="ghost" size="icon" className="h-8 w-8 hover:bg-zinc-800" onClick={() => setCurrentDate(addMonths(currentDate, 1))}>
+                <Button variant="ghost" size="icon" className="h-8 w-8 hover:bg-muted" onClick={() => setCurrentDate(addMonths(currentDate, 1))}>
                   <ChevronRight className="h-4 w-4" />
                 </Button>
               </div>
@@ -564,7 +564,7 @@ export function TaskTracker({ workspaceId, featureId, currentUser }: { workspace
 
             {calendarView === 'day' && (
               <div className="flex flex-col flex-1">
-                <div className="flex items-center gap-2 p-4 overflow-x-auto border-b border-zinc-800/50 scrollbar-hide bg-[#121212]/20">
+                <div className="flex items-center gap-2 p-4 overflow-x-auto border-b border-border scrollbar-hide bg-muted/20">
                   {(() => {
                     const monthStart = startOfMonth(currentDate)
                     const monthEnd = endOfMonth(monthStart)
@@ -576,8 +576,8 @@ export function TaskTracker({ workspaceId, featureId, currentUser }: { workspace
                         className={cn(
                           "flex flex-col items-center justify-center min-w-[60px] h-[80px] rounded-2xl border transition-all duration-300",
                           isSameDay(day, selectedDate) 
-                            ? "bg-blue-600 border-blue-500 text-white shadow-lg shadow-blue-600/20 scale-105" 
-                            : "bg-zinc-900/50 border-zinc-800 text-zinc-500 hover:border-zinc-700"
+                            ? "bg-[#4F6EF7] border-[#4F6EF7] text-white shadow-lg shadow-[#4F6EF7]/20 scale-105" 
+                            : "bg-card border-border text-muted-foreground hover:border-[#4F6EF7]/40 hover:text-foreground"
                         )}
                       >
                         <span className="text-[10px] font-bold uppercase tracking-widest mb-1">{format(day, 'eee')}</span>
@@ -597,11 +597,11 @@ export function TaskTracker({ workspaceId, featureId, currentUser }: { workspace
                   <div className="max-w-4xl mx-auto">
                     <div className="flex items-center justify-between mb-8">
                       <div>
-                        <h2 className="text-4xl font-black text-zinc-100">{format(selectedDate, 'EEEE')}</h2>
-                        <p className="text-zinc-500 font-medium">{format(selectedDate, 'MMMM do, yyyy')}</p>
+                        <h2 className="text-4xl font-black text-foreground">{format(selectedDate, 'EEEE')}</h2>
+                        <p className="text-muted-foreground font-medium">{format(selectedDate, 'MMMM do, yyyy')}</p>
                       </div>
                       <div className="text-right">
-                        <span className="text-5xl font-black text-zinc-800/50">
+                        <span className="text-5xl font-black text-muted-foreground/30">
                           {tasks.filter(t => isSameDay(new Date(t.created_at), selectedDate)).length} Tasks
                         </span>
                       </div>
@@ -613,7 +613,7 @@ export function TaskTracker({ workspaceId, featureId, currentUser }: { workspace
                           key={task.id} 
                           onClick={() => setSelectedTask(task)}
                           className={cn(
-                            "p-6 rounded-2xl border-2 bg-[#121212]/80 shadow-xl transition-all group cursor-pointer border-zinc-800/50 hover:border-blue-500/50"
+                            "p-6 rounded-2xl border-2 bg-card shadow-sm transition-all group cursor-pointer border-border hover:border-[#4F6EF7]/50"
                           )}
                         >
                           <div className="flex items-center justify-between mb-4">
@@ -621,11 +621,11 @@ export function TaskTracker({ workspaceId, featureId, currentUser }: { workspace
                             {getStatusBadge(task.status)}
                           </div>
                           
-                          <h3 className="text-2xl font-bold text-zinc-100 mb-4 group-hover:text-blue-400 transition-colors">
+                          <h3 className="text-2xl font-bold text-foreground mb-4 group-hover:text-[#4F6EF7] transition-colors">
                             {task.title}
                           </h3>
 
-                          <div className="flex items-center justify-between pt-4 border-t border-zinc-800/50">
+                          <div className="flex items-center justify-between pt-4 border-t border-border">
                             <div className="flex items-center gap-3">
                               {task.assignee_ids && task.assignee_ids.length > 0 ? (
                                 <div className="flex gap-1.5 flex-wrap">
@@ -640,18 +640,18 @@ export function TaskTracker({ workspaceId, featureId, currentUser }: { workspace
                                   })}
                                 </div>
                               ) : (
-                                <span className="text-sm font-medium text-zinc-500">Unassigned</span>
+                                <span className="text-sm font-medium text-muted-foreground">Unassigned</span>
                               )}
                             </div>
-                            <Button variant="ghost" size="icon" className="text-zinc-600 hover:text-red-400" onClick={() => handleDeleteTask(task.id)}>
+                            <Button variant="ghost" size="icon" className="text-muted-foreground hover:text-red-400" onClick={() => handleDeleteTask(task.id)}>
                               <Trash2 className="h-4 w-4" />
                             </Button>
                           </div>
                         </div>
                       ))}
                       {tasks.filter(t => isSameDay(new Date(t.created_at), selectedDate)).length === 0 && (
-                        <div className="col-span-full py-20 text-center bg-zinc-900/20 rounded-3xl border border-dashed border-zinc-800">
-                          <p className="text-zinc-500 font-medium">No tasks scheduled for this day.</p>
+                        <div className="col-span-full py-20 text-center bg-muted/20 rounded-3xl border border-dashed border-border">
+                          <p className="text-muted-foreground font-medium">No tasks scheduled for this day.</p>
                           <Button variant="ghost" className="mt-4 text-blue-500" onClick={() => setIsNewTaskOpen(true)}>
                             <Plus className="mr-2 h-4 w-4" /> Create a task
                           </Button>
@@ -664,7 +664,7 @@ export function TaskTracker({ workspaceId, featureId, currentUser }: { workspace
             )}
 
             {calendarView === 'week' && (
-              <div className="flex flex-1 overflow-x-auto bg-[#0d0d0d] scrollbar-hide">
+              <div className="flex flex-1 overflow-x-auto bg-background scrollbar-hide">
                 {(() => {
                   const weekStart = startOfWeek(currentDate, { weekStartsOn: 1 })
                   const days = Array.from({ length: 7 }, (_, i) => {
@@ -674,40 +674,40 @@ export function TaskTracker({ workspaceId, featureId, currentUser }: { workspace
                   })
 
                   return days.map(day => (
-                    <div key={day.toISOString()} className="flex-1 min-w-[300px] border-r border-zinc-800/50 flex flex-col">
+                    <div key={day.toISOString()} className="flex-1 min-w-[300px] border-r border-border flex flex-col">
                       <div className={cn(
-                        "p-6 border-b border-zinc-800/50 flex items-center justify-between bg-[#121212]/30",
-                        isSameDay(day, new Date()) && "bg-blue-600/10"
+                        "p-6 border-b border-border flex items-center justify-between bg-muted/20",
+                        isSameDay(day, new Date()) && "bg-[#4F6EF7]/10"
                       )}>
                         <div>
-                          <span className="text-[10px] font-bold uppercase tracking-widest text-zinc-500 block mb-1">{format(day, 'EEEE')}</span>
+                          <span className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground block mb-1">{format(day, 'EEEE')}</span>
                           <span className={cn(
                             "text-2xl font-black",
-                            isSameDay(day, new Date()) ? "text-blue-500" : "text-zinc-100"
+                            isSameDay(day, new Date()) ? "text-[#4F6EF7]" : "text-foreground"
                           )}>{format(day, 'MMM d')}</span>
                         </div>
-                        <Badge variant="outline" className="bg-zinc-900 border-zinc-800 text-zinc-500 px-3 py-1 font-bold">
+                        <Badge variant="outline" className="bg-muted border-border text-muted-foreground px-3 py-1 font-bold">
                           {tasks.filter(t => isSameDay(new Date(t.created_at), day)).length}
                         </Badge>
                       </div>
-                      <div className="flex-1 p-6 space-y-4 overflow-y-auto bg-[#0d0d0d] scrollbar-thin scrollbar-thumb-zinc-800">
+                      <div className="flex-1 p-6 space-y-4 overflow-y-auto bg-background scrollbar-thin">
                         {tasks.filter(t => isSameDay(new Date(t.created_at), day)).map(task => (
                           <div 
                             key={task.id} 
                             className={cn(
-                              "p-5 rounded-2xl border-2 bg-[#121212]/80 shadow-xl hover:-translate-y-1 transition-all cursor-pointer border-zinc-800/50 hover:border-blue-500/50"
+                              "p-5 rounded-2xl border-2 bg-card shadow-sm hover:-translate-y-1 transition-all cursor-pointer border-border hover:border-[#4F6EF7]/50"
                             )}
                             onClick={() => setSelectedTask(task)}
                           >
                             <div className="flex items-center justify-between mb-3">
                               <div />
                               <div className="flex gap-1">
-                                <div className="w-1.5 h-1.5 rounded-full bg-zinc-800" />
-                                <div className="w-1.5 h-1.5 rounded-full bg-zinc-800" />
+                                <div className="w-1.5 h-1.5 rounded-full bg-muted-foreground" />
+                                <div className="w-1.5 h-1.5 rounded-full bg-muted-foreground" />
                               </div>
                             </div>
-                            <h4 className="text-base font-bold text-zinc-100 mb-4 line-clamp-2 leading-tight hover:text-blue-400 transition-colors">{task.title}</h4>
-                            <div className="flex items-center justify-between pt-4 border-t border-zinc-800/50">
+                            <h4 className="text-base font-bold text-foreground mb-4 line-clamp-2 leading-tight hover:text-[#4F6EF7] transition-colors">{task.title}</h4>
+                            <div className="flex items-center justify-between pt-4 border-t border-border">
                               <div className="flex gap-1 flex-wrap">
                                 {task.assignee_ids && task.assignee_ids.length > 0 ? (
                                   task.assignee_ids.map((id: string) => {
@@ -720,10 +720,10 @@ export function TaskTracker({ workspaceId, featureId, currentUser }: { workspace
                                     )
                                   })
                                 ) : (
-                                  <span className="text-[9px] text-zinc-500 font-medium">Unassigned</span>
+                                  <span className="text-[9px] text-muted-foreground font-medium">Unassigned</span>
                                 )}
                               </div>
-                              <div className="flex items-center gap-1.5 text-[10px] font-bold text-zinc-600">
+                              <div className="flex items-center gap-1.5 text-[10px] font-bold text-muted-foreground">
                                 <Clock className="h-3 w-3" />
                                 <span>2 days</span>
                               </div>
@@ -739,9 +739,9 @@ export function TaskTracker({ workspaceId, featureId, currentUser }: { workspace
 
             {calendarView === 'month' && (
               <div className="flex flex-col flex-1 overflow-hidden">
-                <div className="grid grid-cols-7 bg-[#121212]/30">
+                <div className="grid grid-cols-7 bg-muted/30">
               {['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'].map(day => (
-                <div key={day} className="py-3 text-center text-[10px] uppercase tracking-widest font-bold text-zinc-600 border-b border-zinc-800/50">
+                <div key={day} className="py-3 text-center text-[10px] uppercase tracking-widest font-bold text-muted-foreground border-b border-border">
                   {day}
                 </div>
               ))}
@@ -764,25 +764,25 @@ export function TaskTracker({ workspaceId, featureId, currentUser }: { workspace
                     <div 
                       key={day.toISOString()} 
                       className={cn(
-                        "min-h-[160px] p-2 border-r border-b border-zinc-800/30 transition-all duration-300 group hover:bg-zinc-800/10 flex flex-col",
+                        "min-h-[160px] p-2 border-r border-b border-border transition-all duration-300 group hover:bg-muted/20 flex flex-col",
                         !isCurrentMonth && "opacity-20",
-                        isToday && "bg-blue-500/5"
+                        isToday && "bg-primary/5"
                       )}
                     >
                       <div className="flex justify-between items-start mb-2 px-1">
                         <span className={cn(
                           "text-sm font-bold w-7 h-7 flex items-center justify-center rounded-lg transition-all",
-                          isToday ? "bg-blue-600 text-white shadow-lg shadow-blue-600/20" : "text-zinc-500 group-hover:text-zinc-300"
+                          isToday ? "bg-[#4F6EF7] text-white shadow-lg shadow-[#4F6EF7]/20" : "text-muted-foreground group-hover:text-foreground"
                         )}>
                           {format(day, 'd')}
                         </span>
                       </div>
-                      <div className="flex-1 space-y-2 overflow-y-auto pr-1 scrollbar-thin scrollbar-thumb-zinc-800">
+                      <div className="flex-1 space-y-2 overflow-y-auto pr-1 scrollbar-thin scrollbar-thumb-muted">
                         {dayTasks.map(task => (
                           <div 
                             key={task.id} 
                             className={cn(
-                              "p-3 rounded-2xl border-2 bg-[#121212]/80 shadow-sm transition-all hover:-translate-y-0.5 cursor-pointer flex flex-col gap-2 border-zinc-800/50 hover:border-blue-500/50",
+                              "p-3 rounded-2xl border-2 bg-card shadow-sm transition-all hover:-translate-y-0.5 cursor-pointer flex flex-col gap-2 border-border hover:border-[#4F6EF7]/50",
                               task.status === 'Done' && "opacity-50 grayscale"
                             )}
                             onClick={() => setSelectedTask(task)}
@@ -790,15 +790,15 @@ export function TaskTracker({ workspaceId, featureId, currentUser }: { workspace
                             <div className="flex items-center justify-between">
                               <div />
                               <div className="flex gap-0.5 opacity-50">
-                                <div className="w-1 h-1 rounded-full bg-zinc-500" />
-                                <div className="w-1 h-1 rounded-full bg-zinc-500" />
-                                <div className="w-1 h-1 rounded-full bg-zinc-500" />
+                                <div className="w-1 h-1 rounded-full bg-muted-foreground" />
+                                <div className="w-1 h-1 rounded-full bg-muted-foreground" />
+                                <div className="w-1 h-1 rounded-full bg-muted-foreground" />
                               </div>
                             </div>
                             
                             <div className={cn(
-                              "font-bold text-zinc-100 text-[11px] leading-tight line-clamp-2",
-                              task.status === 'Done' && "line-through text-zinc-500"
+                              "font-bold text-foreground text-[11px] leading-tight line-clamp-2",
+                              task.status === 'Done' && "line-through text-muted-foreground"
                             )}>
                               {task.title}
                             </div>
@@ -838,12 +838,12 @@ export function TaskTracker({ workspaceId, featureId, currentUser }: { workspace
         </TabsContent>
       </Tabs>
       <Dialog open={!!selectedTask} onOpenChange={(open) => !open && setSelectedTask(null)}>
-        <DialogContent className="sm:max-w-[700px] bg-white dark:bg-zinc-900 border border-zinc-100 dark:border-zinc-800 text-zinc-900 dark:text-zinc-100 p-0 overflow-hidden rounded-[32px] shadow-2xl">
+        <DialogContent className="sm:max-w-[700px] bg-card border border-border text-foreground p-0 overflow-hidden rounded-[32px] shadow-2xl">
           {selectedTask && (
             <div className="flex flex-col">
-              <div className="relative h-48 bg-zinc-50 dark:bg-zinc-800 flex items-center justify-center overflow-hidden transition-colors">
-                 <div className="absolute inset-0 bg-gradient-to-t from-white dark:from-zinc-900 to-transparent" />
-                 <h2 className="relative text-3xl font-black text-zinc-900 dark:text-white px-8 text-center tracking-tight">{selectedTask.title}</h2>
+              <div className="relative h-48 bg-muted flex items-center justify-center overflow-hidden transition-colors">
+                 <div className="absolute inset-0 bg-gradient-to-t from-card to-transparent" />
+                 <h2 className="relative text-3xl font-black text-foreground px-8 text-center tracking-tight">{selectedTask.title}</h2>
               </div>
               
               <div className="p-8 space-y-8">
@@ -882,8 +882,8 @@ export function TaskTracker({ workspaceId, featureId, currentUser }: { workspace
 
                 <div className="space-y-3">
                   <p className="text-[10px] text-zinc-400 dark:text-zinc-500 font-black uppercase tracking-widest">Description</p>
-                  <div className="text-zinc-600 dark:text-zinc-400 leading-relaxed text-lg bg-zinc-50 dark:bg-zinc-950/50 p-6 rounded-2xl border border-zinc-100 dark:border-zinc-800 shadow-inner">
-                    <div className="prose dark:prose-invert max-w-none" dangerouslySetInnerHTML={{ __html: selectedTask.description || '<span className="italic opacity-50">No description provided.</span>' }} />
+                  <div className="text-foreground leading-relaxed text-lg bg-muted/30 p-6 rounded-2xl border border-border shadow-inner">
+                    <div className="prose dark:prose-invert max-w-none" dangerouslySetInnerHTML={{ __html: selectedTask.description || '<span class="italic opacity-50">No description provided.</span>' }} />
                   </div>
                 </div>
 
