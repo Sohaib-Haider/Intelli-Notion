@@ -174,7 +174,7 @@ export function OutreachLog({ workspaceId, featureId, currentUser }: { workspace
 
       <div className="space-y-10">
         {/* Unified Team Total Card */}
-        <div className="bg-gradient-to-br from-[#4F6EF7] to-[#8B5CF6] rounded-[32px] p-10 text-white shadow-2xl shadow-blue-500/30 relative overflow-hidden flex flex-col md:flex-row md:items-center justify-between min-h-[180px]">
+        <div className="bg-gradient-to-br from-[#312e81] via-[#4c1d95] to-[#8b5cf6] rounded-[32px] p-10 text-white shadow-2xl shadow-purple-900/40 relative overflow-hidden flex flex-col md:flex-row md:items-center justify-between min-h-[180px]">
           <div className="relative z-10 space-y-2">
             <p className="text-blue-100 font-bold text-sm tracking-tight">Team total this week</p>
             <h2 className="text-5xl font-black tracking-tight flex items-baseline gap-3">
