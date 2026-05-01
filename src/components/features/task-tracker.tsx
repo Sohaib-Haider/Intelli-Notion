@@ -45,6 +45,7 @@ import { Checkbox } from '@/components/ui/checkbox'
 import { RichTextEditor } from '@/components/rich-text-editor'
 import { getTasks, getWorkspaceMembers, createTask, updateTaskStatus, deleteTask, updateTaskAssignees } from '@/lib/actions/tasks'
 import { cn } from '@/lib/utils'
+import { getMemberColor } from '@/lib/colors'
 
 export function TaskTracker({ workspaceId, featureId, currentUser }: { workspaceId: string, featureId: string, currentUser: any }) {
   const [tasks, setTasks] = React.useState<any[]>([])
@@ -148,21 +149,7 @@ export function TaskTracker({ workspaceId, featureId, currentUser }: { workspace
     }
   }
 
-  const getUserColor = (userId: string) => {
-    if (!userId) return 'bg-muted text-muted-foreground'
-    const colors = [
-      'bg-red-500/10 text-red-600 dark:text-red-400 border border-red-500/20',
-      'bg-[#4F6EF7]/10 text-[#4F6EF7] border border-[#4F6EF7]/20',
-      'bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border border-emerald-500/20',
-      'bg-purple-500/10 text-purple-600 dark:text-purple-400 border border-purple-500/20',
-      'bg-yellow-500/10 text-yellow-600 dark:text-yellow-400 border border-yellow-500/20',
-      'bg-pink-500/10 text-pink-600 dark:text-pink-400 border border-pink-500/20',
-      'bg-[#4F6EF7]/10 text-[#4F6EF7] border border-[#4F6EF7]/20',
-      'bg-orange-500/10 text-orange-600 dark:text-orange-400 border border-orange-500/20',
-    ]
-    const index = userId.split('').reduce((acc, char) => acc + char.charCodeAt(0), 0) % colors.length
-    return colors[index]
-  }
+
 
   return (
     <div className="flex flex-col bg-background text-foreground transition-all duration-500">
@@ -253,7 +240,7 @@ export function TaskTracker({ workspaceId, featureId, currentUser }: { workspace
                            )}
                          >
                            <Avatar className="h-5 w-5">
-                             <AvatarFallback className="text-[8px] font-black" style={{ backgroundColor: getUserColor(member.user_id) }}>
+                             <AvatarFallback className="text-[8px] font-black" style={{ backgroundColor: getMemberColor(member.user_id) }}>
                                {member.profiles?.full_name?.[0] || 'U'}
                              </AvatarFallback>
                            </Avatar>
@@ -439,7 +426,9 @@ export function TaskTracker({ workspaceId, featureId, currentUser }: { workspace
                         {task.assignee_id ? (
                           <div className="flex items-center gap-2">
                             <Avatar className="h-5 w-5">
-                              <AvatarFallback className="bg-muted text-muted-foreground text-[10px]">U</AvatarFallback>
+                              <AvatarFallback className="text-[8px] font-black text-white" style={{ backgroundColor: getMemberColor(task.assignee_id) }}>
+                                {(task.profiles?.full_name || 'U').charAt(0)}
+                              </AvatarFallback>
                             </Avatar>
                             <span className="text-xs text-muted-foreground">
                               {task.assignee_id === currentUser.id ? 'Me' : (task.profiles?.full_name || 'User')}
@@ -667,7 +656,7 @@ export function TaskTracker({ workspaceId, featureId, currentUser }: { workspace
                                     const m = members.find(mem => mem.user_id === id)
                                     const name = m ? (m.profiles?.full_name?.split(' ')[0] || `User`) : 'Unknown'
                                     return (
-                                      <span key={id} className={cn("text-xs px-2 py-1 rounded-full font-bold tracking-wider", getUserColor(id))}>
+                                      <span key={id} className="text-xs px-2 py-1 rounded-full font-bold tracking-wider text-white" style={{ backgroundColor: getMemberColor(id) }}>
                                         {name}
                                       </span>
                                     )

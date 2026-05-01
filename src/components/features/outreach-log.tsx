@@ -25,14 +25,9 @@ import { Badge } from '@/components/ui/badge'
 import { getOutreachLogs, createOutreachLog, deleteOutreachLog } from '@/lib/actions/outreach'
 import { getWorkspaceMembers } from '@/lib/actions/tasks'
 import { cn } from '@/lib/utils'
+import { getMemberColor } from '@/lib/colors'
 
-const MEMBER_COLORS = [
-  '#4F6EF7', // blue
-  '#E85D75', // pink
-  '#2DB89A', // teal
-  '#EF9F27', // amber
-  '#7F77DD', // purple
-]
+
 
 export function OutreachLog({ workspaceId, featureId, currentUser }: { workspaceId: string, featureId: string, currentUser: any }) {
   const [logs, setLogs] = React.useState<any[]>([])
@@ -77,10 +72,7 @@ export function OutreachLog({ workspaceId, featureId, currentUser }: { workspace
     setIsSubmitting(false)
   }
 
-  const getMemberColor = (memberId: string) => {
-    const index = members.findIndex(m => m.user_id === memberId)
-    return MEMBER_COLORS[index % MEMBER_COLORS.length]
-  }
+
 
   const getChannelIcon = (channel: string) => {
     switch (channel) {
