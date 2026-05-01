@@ -342,6 +342,7 @@ export function WorkspaceSidebar({
             </SidebarMenuItem>
           </SidebarMenu>
         )}
+        </div>
       </SidebarContent>
 
       <SidebarFooter className="bg-card rounded-b-2xl border-x border-b border-border pt-2 px-3 group-data-[collapsible=icon]:px-0">
@@ -411,7 +412,6 @@ export function WorkspaceSidebar({
           </SidebarMenuItem>
         </SidebarMenu>
       </SidebarFooter>
-      </div>
       <SidebarRail />
     </Sidebar>
   )
