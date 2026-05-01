@@ -15,7 +15,7 @@ export function RichTextEditor({ value, onChange }: { value: string, onChange: (
     },
     editorProps: {
       attributes: {
-        class: 'prose prose-invert max-w-none min-h-[150px] p-4 focus:outline-none border border-zinc-700 rounded-b-md bg-zinc-950 text-zinc-100 text-sm',
+        class: 'prose dark:prose-invert max-w-none min-h-[150px] p-4 focus:outline-none border border-border rounded-b-xl bg-muted/30 text-foreground text-sm transition-colors',
       },
     },
   })
@@ -24,12 +24,12 @@ export function RichTextEditor({ value, onChange }: { value: string, onChange: (
 
   return (
     <div className="flex flex-col w-full">
-      <div className="flex flex-wrap gap-1 border border-b-0 border-zinc-700 bg-zinc-900 p-1 rounded-t-md">
+      <div className="flex flex-wrap gap-1 border border-b-0 border-border bg-muted p-1 rounded-t-xl">
         <Toggle
           size="sm"
           pressed={editor.isActive('bold')}
           onPressedChange={() => editor.chain().focus().toggleBold().run()}
-          className="data-[state=on]:bg-zinc-800 hover:bg-zinc-800"
+          className="data-[state=on]:bg-background hover:bg-background/80 text-foreground"
         >
           <Bold className="h-4 w-4" />
         </Toggle>
@@ -37,7 +37,7 @@ export function RichTextEditor({ value, onChange }: { value: string, onChange: (
           size="sm"
           pressed={editor.isActive('italic')}
           onPressedChange={() => editor.chain().focus().toggleItalic().run()}
-          className="data-[state=on]:bg-zinc-800 hover:bg-zinc-800"
+          className="data-[state=on]:bg-background hover:bg-background/80 text-foreground"
         >
           <Italic className="h-4 w-4" />
         </Toggle>
@@ -45,7 +45,7 @@ export function RichTextEditor({ value, onChange }: { value: string, onChange: (
           size="sm"
           pressed={editor.isActive('bulletList')}
           onPressedChange={() => editor.chain().focus().toggleBulletList().run()}
-          className="data-[state=on]:bg-zinc-800 hover:bg-zinc-800"
+          className="data-[state=on]:bg-background hover:bg-background/80 text-foreground"
         >
           <List className="h-4 w-4" />
         </Toggle>
@@ -53,7 +53,7 @@ export function RichTextEditor({ value, onChange }: { value: string, onChange: (
           size="sm"
           pressed={editor.isActive('orderedList')}
           onPressedChange={() => editor.chain().focus().toggleOrderedList().run()}
-          className="data-[state=on]:bg-zinc-800 hover:bg-zinc-800"
+          className="data-[state=on]:bg-background hover:bg-background/80 text-foreground"
         >
           <ListOrdered className="h-4 w-4" />
         </Toggle>

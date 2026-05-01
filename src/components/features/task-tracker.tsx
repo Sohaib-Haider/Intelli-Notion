@@ -664,7 +664,7 @@ export function TaskTracker({ workspaceId, featureId, currentUser }: { workspace
             )}
 
             {calendarView === 'week' && (
-              <div className="flex flex-1 overflow-x-auto bg-background scrollbar-hide">
+              <div className="flex flex-1 overflow-x-auto bg-background scrollbar-thin scrollbar-thumb-muted-foreground/20">
                 {(() => {
                   const weekStart = startOfWeek(currentDate, { weekStartsOn: 1 })
                   const days = Array.from({ length: 7 }, (_, i) => {
@@ -690,7 +690,7 @@ export function TaskTracker({ workspaceId, featureId, currentUser }: { workspace
                           {tasks.filter(t => isSameDay(new Date(t.created_at), day)).length}
                         </Badge>
                       </div>
-                      <div className="flex-1 p-6 space-y-4 overflow-y-auto bg-background scrollbar-thin">
+                      <div className="flex-1 p-6 space-y-4 overflow-y-auto bg-background scrollbar-thin scrollbar-thumb-muted-foreground/20">
                         {tasks.filter(t => isSameDay(new Date(t.created_at), day)).map(task => (
                           <div 
                             key={task.id} 

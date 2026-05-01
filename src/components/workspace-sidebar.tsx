@@ -115,7 +115,8 @@ export function WorkspaceSidebar({
   }
 
   return (
-    <Sidebar className="border-r border-border bg-card text-card-foreground transition-all duration-300 m-3 rounded-2xl overflow-hidden shadow-sm">
+    <Sidebar collapsible="icon" className="border-none bg-transparent transition-all duration-300 p-3">
+      <div className="flex flex-col h-full bg-card text-card-foreground rounded-2xl overflow-hidden shadow-lg border border-border">
       {/* Create Workspace modal */}
       <Dialog open={isWorkspaceModalOpen} onOpenChange={setIsWorkspaceModalOpen}>
         <DialogContent className="sm:max-w-[425px] bg-card border border-border text-card-foreground rounded-2xl">
@@ -166,13 +167,13 @@ export function WorkspaceSidebar({
                 <div className="flex aspect-square size-8 items-center justify-center rounded-xl bg-primary text-primary-foreground shadow-sm">
                   <SquareTerminal className="size-4" />
                 </div>
-                <div className="grid flex-1 text-left text-sm leading-tight">
+                <div className="grid flex-1 text-left text-sm leading-tight group-data-[collapsible=icon]:hidden">
                   <span className="truncate font-semibold text-foreground">
                     {activeWorkspace?.name || "Select Workspace"}
                   </span>
                   <span className="truncate text-xs text-muted-foreground">Free Plan</span>
                 </div>
-                <ChevronsUpDown className="ml-auto size-4 text-muted-foreground" />
+                <ChevronsUpDown className="ml-auto size-4 text-muted-foreground group-data-[collapsible=icon]:hidden" />
               </DropdownMenuTrigger>
               <DropdownMenuContent
                 className="w-[--radix-dropdown-menu-trigger-width] min-w-56 rounded-xl bg-card border border-border text-card-foreground p-2 shadow-lg"
@@ -234,7 +235,7 @@ export function WorkspaceSidebar({
 
         {activeWorkspace && (
           <SidebarMenu className="mt-2 px-3 space-y-1">
-            <div className="mb-1 px-2 text-[10px] font-bold uppercase tracking-[0.15em] text-muted-foreground">
+            <div className="mb-1 px-2 text-[10px] font-bold uppercase tracking-[0.15em] text-muted-foreground group-data-[collapsible=icon]:hidden">
               Features
             </div>
             {features.map((feature) => {
@@ -245,30 +246,32 @@ export function WorkspaceSidebar({
                   <SidebarMenuButton
                     render={<a href={`/dashboard/${activeWorkspace.id}/${feature.id}`} />}
                     isActive={isActive}
+                    tooltip={feature.title}
                     className={cn(
-                      "group/menu-button flex h-11 items-center gap-3 rounded-xl px-3 transition-all duration-200 font-medium text-sm",
+                      "group/menu-button flex h-12 items-center gap-3 rounded-xl px-2 transition-all duration-200 font-medium text-sm",
                       isActive
                         ? "bg-primary/10 text-primary font-semibold"
                         : "text-foreground hover:bg-accent hover:text-foreground"
                     )}
                   >
                     <div className={cn(
-                      "flex size-7 shrink-0 items-center justify-center rounded-lg",
-                      isActive ? "bg-primary text-primary-foreground shadow-sm shadow-primary/30" : "bg-muted text-muted-foreground"
+                      "flex size-10 shrink-0 items-center justify-center rounded-full transition-all duration-300",
+                      isActive 
+                        ? "bg-[#4F6EF7] text-white shadow-lg shadow-[#4F6EF7]/40" 
+                        : "bg-muted text-muted-foreground group-hover:bg-accent-foreground/10"
                     )}>
-                      <SquareTerminal className="size-3.5" />
+                      {feature.type === 'OUTREACH_LOG' ? <BarChart3 className="size-5" /> : <SquareTerminal className="size-5" />}
                     </div>
-                    <span className="flex-1 truncate">{feature.title}</span>
-                    {/* Task count badge — styled like the reference image */}
+                    <span className="flex-1 truncate group-data-[collapsible=icon]:hidden">{feature.title}</span>
                     {isActive && (
-                      <span className="flex h-5 min-w-5 items-center justify-center rounded-md bg-primary px-1.5 text-[10px] font-bold text-primary-foreground tabular-nums">
+                      <span className="flex h-5 min-w-5 items-center justify-center rounded-md bg-primary px-1.5 text-[10px] font-bold text-primary-foreground tabular-nums group-data-[collapsible=icon]:hidden">
                         ✓
                       </span>
                     )}
                     <Button
                       variant="ghost"
                       size="icon"
-                      className="opacity-0 group-hover/menu-button:opacity-100 h-6 w-6 text-muted-foreground hover:text-destructive hover:bg-destructive/10 transition-all rounded-lg"
+                      className="opacity-0 group-hover/menu-button:opacity-100 h-6 w-6 text-muted-foreground hover:text-destructive hover:bg-destructive/10 transition-all rounded-lg group-data-[collapsible=icon]:hidden"
                       onClick={(e) => handleDeleteFeature(feature.id, e)}
                     >
                       <Trash2 className="size-3" />
@@ -329,11 +332,11 @@ export function WorkspaceSidebar({
                 render={
                   <a href={`/dashboard/${activeWorkspace.id}/settings`}>
                     <Settings className="size-4" />
-                    <span>Settings</span>
-                    <ChevronRight className="ml-auto size-3.5 text-muted-foreground" />
+                    <span className="group-data-[collapsible=icon]:hidden">Settings</span>
+                    <ChevronRight className="ml-auto size-3.5 text-muted-foreground group-data-[collapsible=icon]:hidden" />
                   </a>
                 }
-                className="h-10 rounded-xl text-muted-foreground hover:bg-accent hover:text-foreground transition-colors font-medium text-sm"
+                className="h-10 rounded-full text-muted-foreground hover:bg-accent hover:text-foreground transition-colors font-medium text-sm"
               />
             </SidebarMenuItem>
           </SidebarMenu>
@@ -355,12 +358,12 @@ export function WorkspaceSidebar({
                       {(user?.user_metadata?.full_name || user?.email)?.charAt(0).toUpperCase()}
                     </AvatarFallback>
                   </Avatar>
-                  <div className="grid flex-1 text-left text-sm leading-tight">
+                  <div className="grid flex-1 text-left text-sm leading-tight group-data-[collapsible=icon]:hidden">
                     <span className="truncate font-semibold text-foreground">
                       {user?.user_metadata?.full_name || user?.email}
                     </span>
                   </div>
-                  <ChevronsUpDown className="ml-auto size-4 text-muted-foreground" />
+                  <ChevronsUpDown className="ml-auto size-4 text-muted-foreground group-data-[collapsible=icon]:hidden" />
                 </SidebarMenuButton>
               } />
               <DropdownMenuContent
@@ -408,6 +411,7 @@ export function WorkspaceSidebar({
           </SidebarMenuItem>
         </SidebarMenu>
       </SidebarFooter>
+      </div>
       <SidebarRail />
     </Sidebar>
   )

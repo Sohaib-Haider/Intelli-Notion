@@ -24,25 +24,28 @@ export default async function DashboardLayout({
     <SidebarProvider>
       <WorkspaceSidebar workspaces={workspaces || []} user={user} />
       <main className="flex flex-1 flex-col overflow-hidden bg-background transition-all duration-300">
-        <header className="flex h-16 items-center justify-between bg-card border-b border-border px-8 transition-all">
+        <header className="flex h-20 items-center justify-between px-10 transition-all">
+          <div className="flex items-center gap-6">
+            <SidebarTrigger className="text-muted-foreground hover:text-primary transition-colors h-10 w-10" />
+            <div className="flex flex-col">
+               <h1 className="text-2xl font-black text-foreground tracking-tight">Morning, {user.user_metadata?.full_name?.split(' ')[0] || 'User'}!</h1>
+               <p className="text-xs text-muted-foreground font-medium">Here's what's on your agenda today.</p>
+            </div>
+          </div>
           <div className="flex items-center gap-4">
-            <SidebarTrigger className="text-muted-foreground hover:text-primary transition-colors" />
-            <div className="h-5 w-[1px] bg-border" />
-            <div className="flex items-center gap-2 bg-muted px-4 py-2 rounded-xl border border-border">
-               <span className="text-[11px] font-semibold text-muted-foreground">Search anything...</span>
-               <kbd className="hidden sm:inline-flex h-5 select-none items-center gap-1 rounded border border-border bg-card px-1.5 font-mono text-[10px] font-medium text-muted-foreground">
+            <div className="hidden md:flex items-center gap-2 bg-muted/50 px-4 py-2 rounded-2xl border border-border/50 w-64 shadow-sm">
+               <span className="text-[11px] font-semibold text-muted-foreground">Search for some activities...</span>
+               <kbd className="ml-auto h-5 select-none items-center gap-1 rounded border border-border bg-card px-1.5 font-mono text-[10px] font-medium text-muted-foreground">
                  <span className="text-xs">⌘</span>K
                </kbd>
             </div>
-          </div>
-          <div className="flex items-center gap-3">
-             <ThemeToggle />
-             <div className="h-9 w-9 rounded-xl bg-primary flex items-center justify-center text-primary-foreground shadow-sm font-bold text-xs">
-                {user.email?.[0].toUpperCase()}
-             </div>
+            <ThemeToggle />
+            <div className="h-10 w-10 rounded-full bg-primary flex items-center justify-center text-primary-foreground shadow-lg shadow-primary/20 font-bold text-sm">
+               {user.email?.[0].toUpperCase()}
+            </div>
           </div>
         </header>
-        <div className="flex-1 overflow-auto px-8 py-8 transition-all">
+        <div className="flex-1 overflow-auto px-10 pb-10 transition-all">
           <div className="h-full w-full">
             {children}
           </div>
