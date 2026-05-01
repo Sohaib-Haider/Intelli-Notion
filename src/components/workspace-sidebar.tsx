@@ -240,7 +240,6 @@ export function WorkspaceSidebar({
             </div>
             {features.map((feature) => {
               const isActive = params.featureId === feature.id
-              const taskCount = isActive ? undefined : undefined // could pass count as prop later
               return (
                 <SidebarMenuItem key={feature.id}>
                   <SidebarMenuButton
@@ -248,7 +247,7 @@ export function WorkspaceSidebar({
                     isActive={isActive}
                     tooltip={feature.title}
                     className={cn(
-                      "group/menu-button flex h-14 items-center gap-3 rounded-xl px-2 transition-all duration-200 font-medium text-sm group-data-[collapsible=icon]:justify-center group-data-[collapsible=icon]:px-0 group-data-[collapsible=icon]:h-14",
+                      "group/menu-button flex h-12 items-center gap-3 rounded-xl px-2 transition-all duration-200 font-medium text-sm group-data-[collapsible=icon]:justify-center group-data-[collapsible=icon]:px-0 group-data-[collapsible=icon]:h-12",
                       isActive
                         ? "bg-primary/10 text-primary font-semibold"
                         : "text-foreground hover:bg-accent hover:text-foreground"
@@ -263,11 +262,6 @@ export function WorkspaceSidebar({
                       {feature.type === 'OUTREACH_LOG' ? <BarChart3 className="size-4.5" /> : <SquareTerminal className="size-4.5" />}
                     </div>
                     <span className="flex-1 group-data-[collapsible=icon]:hidden whitespace-nowrap overflow-hidden font-bold tracking-tight text-sm">{feature.title}</span>
-                    {isActive && (
-                      <span className="flex h-5 min-w-5 items-center justify-center rounded-md bg-primary px-1.5 text-[10px] font-bold text-primary-foreground tabular-nums group-data-[collapsible=icon]:hidden">
-                        ✓
-                      </span>
-                    )}
                     <Button
                       variant="ghost"
                       size="icon"
@@ -426,4 +420,3 @@ export function WorkspaceSidebar({
     </Sidebar>
   )
 }
-
