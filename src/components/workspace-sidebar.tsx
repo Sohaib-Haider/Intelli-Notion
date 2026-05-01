@@ -158,12 +158,12 @@ export function WorkspaceSidebar({
                 render={
                   <SidebarMenuButton
                     size="lg"
-                    className="data-[state=open]:bg-accent rounded-xl hover:bg-accent transition-colors"
+                    className="data-[state=open]:bg-accent rounded-xl hover:bg-accent transition-colors group-data-[collapsible=icon]:justify-center group-data-[collapsible=icon]:px-0"
                   />
                 }
               >
-                <div className="flex aspect-square size-9 items-center justify-center rounded-xl bg-primary text-primary-foreground shadow-sm shrink-0 mx-auto">
-                  <SquareTerminal className="size-5" />
+                <div className="flex aspect-square size-10 items-center justify-center rounded-xl bg-primary text-primary-foreground shadow-lg shadow-primary/20 shrink-0 mx-auto">
+                  <SquareTerminal className="size-6" />
                 </div>
                 <div className="grid flex-1 text-left text-sm leading-tight group-data-[collapsible=icon]:hidden">
                   <span className="truncate font-semibold text-foreground">
@@ -352,9 +352,9 @@ export function WorkspaceSidebar({
               <DropdownMenuTrigger render={
                 <SidebarMenuButton
                   size="lg"
-                  className="rounded-xl data-[state=open]:bg-accent hover:bg-accent transition-colors"
+                  className="rounded-xl data-[state=open]:bg-accent hover:bg-accent transition-colors group-data-[collapsible=icon]:justify-center group-data-[collapsible=icon]:px-0"
                 >
-                  <Avatar className="h-9 w-9 rounded-full shrink-0 mx-auto transition-all duration-300">
+                  <Avatar className="h-10 w-10 rounded-full shrink-0 mx-auto transition-all duration-300 border-2 border-border shadow-sm">
                     <AvatarFallback className="rounded-full bg-primary text-primary-foreground font-bold text-sm shadow-md">
                       {(user?.user_metadata?.full_name || user?.email)?.charAt(0).toUpperCase()}
                     </AvatarFallback>

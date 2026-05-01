@@ -236,12 +236,14 @@ export function OutreachLog({ workspaceId, featureId, currentUser }: { workspace
                 </div>
                 
                 <div className="space-y-5">
-                  <div className="flex items-baseline justify-between">
-                    <div>
-                      <span className="text-5xl font-black text-zinc-900 dark:text-zinc-100">{memberTotal}</span>
-                      <span className="text-xs font-bold text-zinc-400 dark:text-zinc-500 ml-2">reached</span>
+                  <div className="flex items-baseline justify-between flex-wrap gap-2">
+                    <div className="flex items-baseline">
+                      <span className="text-4xl sm:text-5xl font-black text-zinc-900 dark:text-zinc-100 tabular-nums">{memberTotal}</span>
+                      <span className="text-xs font-bold text-zinc-400 dark:text-zinc-500 ml-2 whitespace-nowrap uppercase tracking-tighter">reached</span>
                     </div>
-                    <span className="text-xs font-bold text-[#4F6EF7] bg-blue-50 dark:bg-blue-500/10 px-2 py-1 rounded-md">{share}%</span>
+                    <div className="text-xs font-black text-[#4F6EF7] bg-blue-50 dark:bg-blue-500/10 px-2.5 py-1.5 rounded-xl border border-blue-100/50 dark:border-blue-500/20 whitespace-nowrap">
+                      {share}%
+                    </div>
                   </div>
                   <div className="h-2 bg-zinc-100 dark:bg-zinc-800 rounded-full overflow-hidden">
                     <div 
