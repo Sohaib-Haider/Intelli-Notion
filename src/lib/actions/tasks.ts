@@ -43,7 +43,6 @@ export async function createTask(workspaceId: string, featureId: string, data: a
       feature_id: featureId,
       title: data.title,
       status: data.status || 'Not started',
-      priority: data.priority || 'Medium',
       assignee_id: data.assignee_id || null,
       assignee_ids: data.assignee_ids || [],
       description: data.description || ''

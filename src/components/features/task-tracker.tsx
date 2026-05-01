@@ -176,101 +176,103 @@ export function TaskTracker({ workspaceId, featureId, currentUser }: { workspace
             <DialogTrigger render={<Button className="bg-primary hover:bg-primary/90 text-primary-foreground rounded-xl px-6 h-10 font-semibold shadow-sm transition-all active:scale-95" />}>
               <Plus className="mr-2 h-4 w-4" /> New Task
             </DialogTrigger>
-            <DialogContent className="sm:max-w-[600px] bg-card border border-border text-card-foreground p-0 overflow-hidden rounded-2xl shadow-xl">
-               <div className="bg-primary p-8 text-primary-foreground relative overflow-hidden">
+            <DialogContent className="sm:max-w-[600px] w-[95vw] max-h-[90vh] flex flex-col bg-card border border-border text-card-foreground p-0 overflow-hidden rounded-2xl shadow-xl">
+               <div className="bg-primary p-6 text-primary-foreground relative overflow-hidden shrink-0">
                  <div className="absolute top-[-20%] right-[-10%] w-40 h-40 bg-white/20 rounded-full blur-3xl" />
                  <DialogHeader>
                    <DialogTitle className="text-3xl font-black tracking-tight">Create Task</DialogTitle>
                  </DialogHeader>
                </div>
-               <form onSubmit={handleCreateTask} className="p-10 space-y-8">
-                 <div className="space-y-3">
-                   <label className="text-xs font-black uppercase tracking-[0.2em] text-zinc-400">Task Title</label>
-                   <Input 
-                     placeholder="What needs to be done?"
-                     value={newTaskTitle}
-                     onChange={(e) => setNewTaskTitle(e.target.value)}
-                     className="h-14 border-zinc-100 dark:border-zinc-800 bg-zinc-50/50 dark:bg-zinc-950/50 rounded-[20px] focus:ring-2 focus:ring-[#4F6EF7]/20 text-lg font-bold"
-                     required
-                   />
-                 </div>
-
-                 <div className="grid grid-cols-2 gap-6">
+               <div className="flex-1 overflow-y-auto p-6 md:p-10 no-scrollbar">
+                 <form onSubmit={handleCreateTask} className="space-y-8">
                    <div className="space-y-3">
-                     <label className="text-xs font-black uppercase tracking-[0.2em] text-zinc-400">Due Date</label>
+                     <label className="text-xs font-black uppercase tracking-[0.2em] text-zinc-400">Task Title</label>
                      <Input 
-                       type="date"
-                       value={newTaskDueDate}
-                       onChange={(e) => setNewTaskDueDate(e.target.value)}
-                       className="h-14 border-zinc-100 dark:border-zinc-800 bg-zinc-50/50 dark:bg-zinc-950/50 rounded-[20px] focus:ring-2 focus:ring-[#4F6EF7]/20 font-bold"
+                       placeholder="What needs to be done?"
+                       value={newTaskTitle}
+                       onChange={(e) => setNewTaskTitle(e.target.value)}
+                       className="h-14 border-zinc-100 dark:border-zinc-800 bg-zinc-50/50 dark:bg-zinc-950/50 rounded-[20px] focus:ring-2 focus:ring-[#4F6EF7]/20 text-lg font-bold"
                        required
                      />
                    </div>
+
+                   <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                     <div className="space-y-3">
+                       <label className="text-xs font-black uppercase tracking-[0.2em] text-zinc-400">Due Date</label>
+                       <Input 
+                         type="date"
+                         value={newTaskDueDate}
+                         onChange={(e) => setNewTaskDueDate(e.target.value)}
+                         className="h-14 border-zinc-100 dark:border-zinc-800 bg-zinc-50/50 dark:bg-zinc-950/50 rounded-[20px] focus:ring-2 focus:ring-[#4F6EF7]/20 font-bold"
+                         required
+                       />
+                     </div>
+                     <div className="space-y-3">
+                       <label className="text-xs font-black uppercase tracking-[0.2em] text-zinc-400">Status</label>
+                       <Select value={newTaskStatus} onValueChange={setNewTaskStatus}>
+                         <SelectTrigger className="h-14 border-zinc-100 dark:border-zinc-800 bg-zinc-50/50 dark:bg-zinc-950/50 rounded-[20px] focus:ring-2 focus:ring-[#4F6EF7]/20 font-bold">
+                           <SelectValue />
+                         </SelectTrigger>
+                         <SelectContent className="bg-white dark:bg-zinc-900 border-zinc-100 dark:border-zinc-800 rounded-[20px]">
+                           <SelectItem value="Not started">Not started</SelectItem>
+                           <SelectItem value="In progress">In progress</SelectItem>
+                           <SelectItem value="Done">Done</SelectItem>
+                         </SelectContent>
+                       </Select>
+                     </div>
+                   </div>
+
                    <div className="space-y-3">
-                     <label className="text-xs font-black uppercase tracking-[0.2em] text-zinc-400">Status</label>
-                     <Select value={newTaskStatus} onValueChange={setNewTaskStatus}>
-                       <SelectTrigger className="h-14 border-zinc-100 dark:border-zinc-800 bg-zinc-50/50 dark:bg-zinc-950/50 rounded-[20px] focus:ring-2 focus:ring-[#4F6EF7]/20 font-bold">
-                         <SelectValue />
-                       </SelectTrigger>
-                       <SelectContent className="bg-white dark:bg-zinc-900 border-zinc-100 dark:border-zinc-800 rounded-[20px]">
-                         <SelectItem value="To Do">To Do</SelectItem>
-                         <SelectItem value="In Progress">In Progress</SelectItem>
-                         <SelectItem value="Done">Done</SelectItem>
-                       </SelectContent>
-                     </Select>
+                     <label className="text-xs font-black uppercase tracking-[0.2em] text-zinc-400">Assign Members</label>
+                     <div className="flex flex-wrap gap-2 p-4 border-zinc-100 dark:border-zinc-800 bg-zinc-50/50 dark:bg-zinc-950/50 rounded-[24px] min-h-[80px]">
+                       {members.map(member => (
+                         <button
+                           key={member.user_id}
+                           type="button"
+                           onClick={() => {
+                             if (newTaskAssignees.includes(member.user_id)) {
+                               setNewTaskAssignees(prev => prev.filter(id => id !== member.user_id))
+                             } else {
+                               setNewTaskAssignees(prev => [...prev, member.user_id])
+                             }
+                           }}
+                           className={cn(
+                             "flex items-center gap-2 px-4 py-2 rounded-full text-xs font-bold transition-all border",
+                             newTaskAssignees.includes(member.user_id)
+                               ? "bg-[#4F6EF7] text-white border-transparent shadow-lg shadow-blue-500/20 scale-105"
+                               : "bg-white dark:bg-zinc-900 text-zinc-500 dark:text-zinc-400 border-zinc-100 dark:border-zinc-800 hover:border-blue-500/50"
+                           )}
+                         >
+                           <Avatar className="h-5 w-5">
+                             <AvatarFallback className="text-[8px] font-black" style={{ backgroundColor: getUserColor(member.user_id) }}>
+                               {member.profiles?.full_name?.[0] || 'U'}
+                             </AvatarFallback>
+                           </Avatar>
+                           {member.profiles?.full_name?.split(' ')[0]}
+                         </button>
+                       ))}
+                     </div>
                    </div>
-                 </div>
 
-                 <div className="space-y-3">
-                   <label className="text-xs font-black uppercase tracking-[0.2em] text-zinc-400">Assign Members</label>
-                   <div className="flex flex-wrap gap-2 p-4 border-zinc-100 dark:border-zinc-800 bg-zinc-50/50 dark:bg-zinc-950/50 rounded-[24px] min-h-[80px]">
-                     {members.map(member => (
-                       <button
-                         key={member.user_id}
-                         type="button"
-                         onClick={() => {
-                           if (newTaskAssignees.includes(member.user_id)) {
-                             setNewTaskAssignees(prev => prev.filter(id => id !== member.user_id))
-                           } else {
-                             setNewTaskAssignees(prev => [...prev, member.user_id])
-                           }
-                         }}
-                         className={cn(
-                           "flex items-center gap-2 px-4 py-2 rounded-full text-xs font-bold transition-all border",
-                           newTaskAssignees.includes(member.user_id)
-                             ? "bg-[#4F6EF7] text-white border-transparent shadow-lg shadow-blue-500/20 scale-105"
-                             : "bg-white dark:bg-zinc-900 text-zinc-500 dark:text-zinc-400 border-zinc-100 dark:border-zinc-800 hover:border-blue-500/50"
-                         )}
-                       >
-                         <Avatar className="h-5 w-5">
-                           <AvatarFallback className="text-[8px] font-black" style={{ backgroundColor: getUserColor(member.user_id) }}>
-                             {member.profiles?.full_name?.[0] || 'U'}
-                           </AvatarFallback>
-                         </Avatar>
-                         {member.profiles?.full_name?.split(' ')[0]}
-                       </button>
-                     ))}
+                   <div className="space-y-3">
+                     <label className="text-xs font-black uppercase tracking-[0.2em] text-zinc-400">Description</label>
+                     <RichTextEditor 
+                       value={newTaskDescription} 
+                       onChange={setNewTaskDescription} 
+                       placeholder="Add details about this task..."
+                     />
                    </div>
-                 </div>
 
-                 <div className="space-y-3">
-                   <label className="text-xs font-black uppercase tracking-[0.2em] text-zinc-400">Description</label>
-                   <RichTextEditor 
-                     value={newTaskDescription} 
-                     onChange={setNewTaskDescription} 
-                     placeholder="Add details about this task..."
-                   />
-                 </div>
-
-                 <div className="flex gap-4 pt-4">
-                   <Button variant="ghost" type="button" onClick={() => setIsNewTaskOpen(false)} className="flex-1 h-14 rounded-[20px] font-bold text-zinc-500 hover:bg-zinc-100">
-                     Cancel
-                   </Button>
-                   <Button type="submit" className="flex-[2] h-14 bg-[#4F6EF7] hover:bg-[#3d59d6] text-white rounded-[20px] font-black text-lg shadow-xl shadow-blue-500/20">
-                     Create Task
-                   </Button>
-                 </div>
-               </form>
+                   <div className="flex gap-4 pt-4">
+                     <Button variant="ghost" type="button" onClick={() => setIsNewTaskOpen(false)} className="flex-1 h-14 rounded-[20px] font-bold text-zinc-500 hover:bg-zinc-100">
+                       Cancel
+                     </Button>
+                     <Button type="submit" className="flex-[2] h-14 bg-[#4F6EF7] hover:bg-[#3d59d6] text-white rounded-[20px] font-black text-lg shadow-xl shadow-blue-500/20">
+                       Create Task
+                     </Button>
+                   </div>
+                 </form>
+               </div>
             </DialogContent>
           </Dialog>
         </div>
