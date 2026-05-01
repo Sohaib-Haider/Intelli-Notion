@@ -107,10 +107,10 @@ export function OutreachLog({ workspaceId, featureId, currentUser }: { workspace
   const percentageChange = lastWeekTotal === 0 ? 100 : Math.round(((thisWeekTotal - lastWeekTotal) / lastWeekTotal) * 100)
 
   return (
-    <div className="flex flex-col bg-background text-zinc-900 dark:text-zinc-100 transition-all duration-500">
+    <div className="flex flex-col bg-background text-foreground transition-all duration-500">
       <div className="flex items-center justify-between mb-10">
         <div>
-          <h1 className="text-4xl font-black text-zinc-900 dark:text-zinc-100 tracking-tight">Dashboard</h1>
+          <h1 className="text-4xl font-black text-foreground tracking-tight">Dashboard</h1>
           <div className="flex items-center gap-2 mt-2">
             <div className="h-2 w-2 rounded-full bg-emerald-500 animate-pulse" />
             <p className="text-zinc-500 dark:text-zinc-400 font-bold text-xs uppercase tracking-widest">Live: {format(now, 'MMM d, yyyy')}</p>
@@ -118,7 +118,7 @@ export function OutreachLog({ workspaceId, featureId, currentUser }: { workspace
         </div>
         <div className="flex gap-3">
           <Dialog open={isLogModalOpen} onOpenChange={setIsLogModalOpen}>
-            <DialogTrigger render={<Button className="bg-[#4F6EF7] hover:bg-[#3d59d6] text-white rounded-[20px] px-8 h-12 font-bold shadow-xl shadow-blue-500/20 transition-all active:scale-95" />}>
+            <DialogTrigger render={<Button className="bg-primary hover:bg-primary/90 text-white rounded-xl px-8 h-12 font-bold shadow-xl shadow-primary/20 transition-all active:scale-95" />}>
               <Plus className="mr-2 h-5 w-5" /> Log Outreach
             </DialogTrigger>
             <DialogContent className="sm:max-w-[500px] bg-white/80 dark:bg-zinc-900/80 backdrop-blur-2xl border-zinc-200 dark:border-zinc-800 text-zinc-900 dark:text-zinc-100 p-0 overflow-hidden rounded-[32px] shadow-2xl">
@@ -219,7 +219,7 @@ export function OutreachLog({ workspaceId, featureId, currentUser }: { workspace
             const color = getMemberColor(member.user_id)
 
             return (
-              <div key={member.user_id} className="bg-white dark:bg-zinc-900 p-8 rounded-[32px] border border-zinc-100 dark:border-zinc-800 shadow-xl shadow-blue-500/[0.02] hover:shadow-2xl hover:shadow-blue-500/[0.05] dark:hover:border-zinc-700 transition-all duration-500 group">
+              <div key={member.user_id} className="bg-card p-8 rounded-[32px] border border-border shadow-sm hover:shadow-md transition-all group">
                 <div className="flex items-center gap-5 mb-10">
                   <div className="relative">
                     <Avatar className="h-20 w-20 border-8 border-zinc-50 dark:border-zinc-800 shadow-sm transition-transform duration-500 group-hover:scale-110">
@@ -230,18 +230,18 @@ export function OutreachLog({ workspaceId, featureId, currentUser }: { workspace
                     <div className="absolute bottom-1 right-1 h-5 w-5 rounded-full border-4 border-white dark:border-zinc-900" style={{ backgroundColor: color }} />
                   </div>
                   <div className="flex-1">
-                    <h3 className="font-black text-zinc-900 dark:text-zinc-100 text-xl leading-tight tracking-tight">{member.profiles?.full_name?.split(' ')[0] || 'Member'}</h3>
-                    <p className="text-[10px] text-zinc-400 dark:text-zinc-500 font-black uppercase tracking-widest mt-1">Lead Outreach</p>
+                    <h3 className="font-black text-foreground text-xl leading-tight tracking-tight">{member.profiles?.full_name?.split(' ')[0] || 'Member'}</h3>
+                    <p className="text-[10px] text-muted-foreground font-black uppercase tracking-widest mt-1">Lead Outreach</p>
                   </div>
                 </div>
                 
                 <div className="space-y-5">
                   <div className="flex items-baseline justify-between flex-wrap gap-2">
                     <div className="flex items-baseline">
-                      <span className="text-4xl sm:text-5xl font-black text-zinc-900 dark:text-zinc-100 tabular-nums">{memberTotal}</span>
-                      <span className="text-xs font-bold text-zinc-400 dark:text-zinc-500 ml-2 whitespace-nowrap uppercase tracking-tighter">reached</span>
+                      <span className="text-4xl sm:text-5xl font-black text-foreground tabular-nums">{memberTotal}</span>
+                      <span className="text-xs font-bold text-muted-foreground ml-2 whitespace-nowrap uppercase tracking-tighter">reached</span>
                     </div>
-                    <div className="text-xs font-black text-[#4F6EF7] bg-blue-50 dark:bg-blue-500/10 px-2.5 py-1.5 rounded-xl border border-blue-100/50 dark:border-blue-500/20 whitespace-nowrap">
+                    <div className="text-xs font-black text-primary bg-primary/10 px-2.5 py-1.5 rounded-xl border border-primary/20 whitespace-nowrap">
                       {share}%
                     </div>
                   </div>
@@ -258,14 +258,14 @@ export function OutreachLog({ workspaceId, featureId, currentUser }: { workspace
         </div>
 
         <div className="mt-12 space-y-6">
-          <h2 className="text-xl font-black text-zinc-900 dark:text-zinc-100 flex items-center gap-3">
-             <BarChart3 className="h-6 w-6 text-[#4F6EF7]" /> Outreach feed
+          <h2 className="text-xl font-black text-foreground flex items-center gap-3">
+             <BarChart3 className="h-6 w-6 text-primary" /> Outreach feed
           </h2>
           <div className="space-y-6">
             {logs.map(log => {
               const color = getMemberColor(log.member_id)
               return (
-                <div key={log.id} className="bg-white dark:bg-zinc-900 p-8 rounded-[32px] border border-zinc-100 dark:border-zinc-800 shadow-xl shadow-blue-500/[0.01] hover:shadow-2xl hover:shadow-blue-500/[0.04] transition-all duration-500 flex gap-8 group">
+                <div key={log.id} className="bg-card p-8 rounded-[32px] border border-border shadow-sm hover:shadow-md transition-all flex gap-8 group">
                   <div className="flex flex-col items-center">
                     <Avatar className="h-16 w-16 border-4 border-white dark:border-zinc-800 shadow-md">
                       <AvatarFallback className="text-white font-black text-lg" style={{ backgroundColor: color }}>
@@ -277,20 +277,20 @@ export function OutreachLog({ workspaceId, featureId, currentUser }: { workspace
                   <div className="flex-1">
                     <div className="flex items-center justify-between mb-4">
                       <div className="flex items-center gap-3">
-                        <h4 className="font-black text-zinc-900 dark:text-zinc-100 text-lg tracking-tight">{log.profiles?.full_name || 'Member'}</h4>
+                        <h4 className="font-black text-foreground text-lg tracking-tight">{log.profiles?.full_name || 'Member'}</h4>
                         <div className="h-1.5 w-1.5 rounded-full bg-blue-500 shadow-sm" />
-                        <span className="text-[10px] text-zinc-400 dark:text-zinc-500 font-black uppercase tracking-widest">{format(new Date(log.created_at), 'MMM d, h:mm a')}</span>
+                        <span className="text-[10px] text-muted-foreground font-black uppercase tracking-widest">{format(new Date(log.created_at), 'MMM d, h:mm a')}</span>
                       </div>
                     </div>
                     <div className="flex items-center gap-4 mb-6">
-                      <div className="flex items-center gap-2 bg-zinc-50 dark:bg-zinc-950 px-4 py-2 rounded-[16px] border border-zinc-100 dark:border-zinc-800">
+                      <div className="flex items-center gap-2 bg-muted/50 px-4 py-2 rounded-[16px] border border-border">
                         {getChannelIcon(log.channel)}
-                        <span className="text-xs font-bold text-zinc-600 dark:text-zinc-400">{log.channel}</span>
+                        <span className="text-xs font-bold text-muted-foreground">{log.channel}</span>
                       </div>
-                      <span className="text-sm font-black text-[#4F6EF7] bg-blue-50 dark:bg-blue-500/10 px-4 py-2 rounded-[16px] border border-blue-100/50 dark:border-blue-500/20">+{log.count} reached</span>
+                      <span className="text-sm font-black text-primary bg-primary/10 px-4 py-2 rounded-[16px] border border-primary/20">+{log.count} reached</span>
                     </div>
                     {log.note && (
-                      <div className="bg-zinc-50/30 dark:bg-zinc-950/30 p-6 rounded-[24px] border border-zinc-100 dark:border-zinc-800 italic text-zinc-600 dark:text-zinc-400 text-sm leading-relaxed shadow-inner">
+                      <div className="bg-muted/30 p-6 rounded-[24px] border border-border italic text-muted-foreground text-sm leading-relaxed shadow-inner">
                         "{log.note}"
                       </div>
                     )}

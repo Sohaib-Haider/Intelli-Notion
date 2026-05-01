@@ -165,10 +165,10 @@ export function TaskTracker({ workspaceId, featureId, currentUser }: { workspace
   }
 
   return (
-    <div className="flex flex-col bg-background text-zinc-900 dark:text-zinc-100 transition-all duration-500">
+    <div className="flex flex-col bg-background text-foreground transition-all duration-500">
       <div className="flex items-center justify-between mb-10">
         <div>
-          <h1 className="text-4xl font-black text-zinc-900 dark:text-zinc-100 tracking-tight">Tasks Tracker</h1>
+          <h1 className="text-4xl font-black text-foreground tracking-tight">Tasks Tracker</h1>
           <div className="flex items-center gap-2 mt-2">
             <div className="h-2 w-2 rounded-full bg-emerald-500 animate-pulse" />
             <p className="text-zinc-500 dark:text-zinc-400 font-bold text-xs uppercase tracking-widest">Active Workspace</p>
@@ -200,7 +200,7 @@ export function TaskTracker({ workspaceId, featureId, currentUser }: { workspace
                        placeholder="What needs to be done?"
                        value={newTaskTitle}
                        onChange={(e) => setNewTaskTitle(e.target.value)}
-                       className="h-14 border-zinc-100 dark:border-zinc-800 bg-zinc-50/50 dark:bg-zinc-950/50 rounded-[20px] focus:ring-2 focus:ring-[#4F6EF7]/20 text-lg font-bold"
+                       className="h-14 border-border bg-muted/50 rounded-[20px] focus:ring-2 focus:ring-primary/20 text-lg font-bold"
                        required
                      />
                    </div>
@@ -212,17 +212,17 @@ export function TaskTracker({ workspaceId, featureId, currentUser }: { workspace
                          type="date"
                          value={newTaskDueDate}
                          onChange={(e) => setNewTaskDueDate(e.target.value)}
-                         className="h-14 border-zinc-100 dark:border-zinc-800 bg-zinc-50/50 dark:bg-zinc-950/50 rounded-[20px] focus:ring-2 focus:ring-[#4F6EF7]/20 font-bold"
+                         className="h-14 border-border bg-muted/50 rounded-[20px] focus:ring-2 focus:ring-primary/20 font-bold"
                          required
                        />
                      </div>
                      <div className="space-y-3">
                        <label className="text-xs font-black uppercase tracking-[0.2em] text-zinc-400">Status</label>
                        <Select value={newTaskStatus} onValueChange={setNewTaskStatus}>
-                         <SelectTrigger className="h-14 border-zinc-100 dark:border-zinc-800 bg-zinc-50/50 dark:bg-zinc-950/50 rounded-[20px] focus:ring-2 focus:ring-[#4F6EF7]/20 font-bold">
+                         <SelectTrigger className="h-14 border-border bg-muted/50 rounded-[20px] focus:ring-2 focus:ring-primary/20 font-bold">
                            <SelectValue />
                          </SelectTrigger>
-                         <SelectContent className="bg-white dark:bg-zinc-900 border-zinc-100 dark:border-zinc-800 rounded-[20px]">
+                         <SelectContent className="bg-card border-border rounded-[20px]">
                            <SelectItem value="To Do">To Do</SelectItem>
                            <SelectItem value="In Progress">In Progress</SelectItem>
                            <SelectItem value="Done">Done</SelectItem>
@@ -233,7 +233,7 @@ export function TaskTracker({ workspaceId, featureId, currentUser }: { workspace
 
                    <div className="space-y-3">
                      <label className="text-xs font-black uppercase tracking-[0.2em] text-zinc-400">Assign Members</label>
-                     <div className="flex flex-wrap gap-2 p-4 border-zinc-100 dark:border-zinc-800 bg-zinc-50/50 dark:bg-zinc-950/50 rounded-[24px] min-h-[80px]">
+                     <div className="flex flex-wrap gap-2 p-4 border-border bg-muted/50 rounded-[24px] min-h-[80px]">
                        {members.map(member => (
                          <button
                            key={member.user_id}
