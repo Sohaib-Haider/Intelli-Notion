@@ -26,6 +26,7 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
 import { Avatar, AvatarFallback } from "@/components/ui/avatar"
+import { getMemberColor } from "@/lib/colors"
 import { Button } from "@/components/ui/button"
 import {
   Dialog,
@@ -367,7 +368,10 @@ export function WorkspaceSidebar({
                   className="rounded-xl data-[state=open]:bg-accent hover:bg-accent transition-colors group-data-[collapsible=icon]:justify-center group-data-[collapsible=icon]:px-0"
                 >
                   <Avatar className="h-9 w-9 rounded-full shrink-0 mx-auto transition-all duration-300 border-2 border-border shadow-sm">
-                    <AvatarFallback className="rounded-full bg-primary text-primary-foreground font-bold text-sm shadow-md">
+                    <AvatarFallback 
+                      className="rounded-full text-white font-bold text-sm shadow-md"
+                      style={{ backgroundColor: getMemberColor(user?.id) }}
+                    >
                       {(user?.user_metadata?.full_name || user?.email)?.charAt(0).toUpperCase()}
                     </AvatarFallback>
                   </Avatar>
@@ -389,7 +393,10 @@ export function WorkspaceSidebar({
                   <DropdownMenuLabel className="p-0 font-normal">
                     <div className="flex items-center gap-2 px-3 py-2.5 text-left text-sm">
                       <Avatar className="h-8 w-8 rounded-xl">
-                        <AvatarFallback className="rounded-xl bg-primary text-primary-foreground font-bold">
+                        <AvatarFallback 
+                          className="rounded-xl text-white font-bold"
+                          style={{ backgroundColor: getMemberColor(user?.id) }}
+                        >
                           {(user?.user_metadata?.full_name || user?.email)?.charAt(0).toUpperCase()}
                         </AvatarFallback>
                       </Avatar>

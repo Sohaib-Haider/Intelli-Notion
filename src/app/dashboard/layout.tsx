@@ -5,6 +5,7 @@ import { getWorkspaces } from "@/lib/actions/workspace"
 import { redirect } from "next/navigation"
 
 import { ThemeToggle } from "@/components/theme-toggle"
+import { getMemberColor } from "@/lib/colors"
 
 export default async function DashboardLayout({
   children,
@@ -40,7 +41,10 @@ export default async function DashboardLayout({
                </kbd>
             </div>
             <ThemeToggle />
-            <div className="h-10 w-10 rounded-full bg-primary flex items-center justify-center text-primary-foreground shadow-lg shadow-primary/20 font-bold text-sm">
+            <div 
+              className="h-10 w-10 rounded-full flex items-center justify-center text-white shadow-lg font-bold text-sm"
+              style={{ backgroundColor: getMemberColor(user.id) }}
+            >
                {user.email?.[0].toUpperCase()}
             </div>
           </div>
