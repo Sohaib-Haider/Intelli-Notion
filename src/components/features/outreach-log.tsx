@@ -181,64 +181,34 @@ export function OutreachLog({ workspaceId, featureId, currentUser }: { workspace
       </div>
 
       <div className="space-y-10">
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-          <div className="bg-white dark:bg-zinc-900 rounded-[32px] p-8 border border-zinc-100 dark:border-zinc-800 shadow-xl shadow-blue-500/[0.03] relative overflow-hidden group">
-            <div className="relative z-10">
-              <p className="text-zinc-400 dark:text-zinc-500 font-bold uppercase tracking-[0.1em] text-[10px] mb-2">Weekly Outreach / Day</p>
-              <div className="flex items-baseline gap-4 mb-6">
-                <h2 className="text-5xl font-black text-zinc-900 dark:text-zinc-100 tracking-tighter">{thisWeekTotal}</h2>
-                <div className={cn(
-                  "flex items-center gap-1 px-3 py-1 rounded-full font-bold text-xs",
-                  percentageChange >= 0 ? "bg-emerald-50 text-emerald-600 dark:bg-emerald-500/10 dark:text-emerald-400" : "bg-red-50 text-red-600"
-                )}>
-                  {percentageChange >= 0 ? <TrendingUp className="h-3 w-3" /> : <TrendingDown className="h-3 w-3" />}
-                  {Math.abs(percentageChange)}% <span className="opacity-60 font-medium ml-1">last week</span>
-                </div>
-              </div>
-              <div className="h-20 w-full mt-4 flex items-end gap-1">
-                {[40, 70, 45, 90, 65, 80, 50].map((h, i) => (
-                  <div key={i} className="flex-1 bg-blue-50 dark:bg-blue-900/20 rounded-t-lg relative group/bar overflow-hidden">
-                    <div 
-                      className="absolute bottom-0 w-full bg-blue-500/20 transition-all duration-700 ease-out group-hover/bar:bg-blue-500" 
-                      style={{ height: `${h}%` }} 
-                    />
-                  </div>
-                ))}
-              </div>
-            </div>
+        {/* Unified Team Total Card */}
+        <div className="bg-[#4F6EF7] rounded-[24px] p-8 text-white shadow-xl shadow-blue-500/20 relative overflow-hidden flex flex-col md:flex-row md:items-center justify-between min-h-[160px]">
+          <div className="relative z-10 space-y-2">
+            <p className="text-blue-100 font-bold text-sm tracking-tight">Team total this week</p>
+            <h2 className="text-5xl font-black tracking-tight flex items-baseline gap-3">
+              {thisWeekTotal.toLocaleString()} <span className="text-2xl font-bold opacity-90">people reached</span>
+            </h2>
+            <p className="text-blue-100 font-medium text-sm opacity-80">
+              {logs.filter(log => isWithinInterval(new Date(log.created_at), { start: weekStart, end: weekEnd }))
+                .map(log => log.channel)
+                .filter((v, i, a) => a.indexOf(v) === i)
+                .join(' · ') || 'No outreach yet'}
+            </p>
           </div>
 
-          <div className="bg-white dark:bg-zinc-900 rounded-[32px] p-8 border border-zinc-100 dark:border-zinc-800 shadow-xl shadow-blue-500/[0.03] relative overflow-hidden">
-            <p className="text-zinc-400 dark:text-zinc-500 font-bold uppercase tracking-[0.1em] text-[10px] mb-2">Team Engagement / Day</p>
-            <div className="flex items-baseline gap-4 mb-6">
-              <h2 className="text-5xl font-black text-zinc-900 dark:text-zinc-100 tracking-tighter">84%</h2>
-              <div className="bg-amber-50 text-amber-600 dark:bg-amber-500/10 dark:text-amber-400 px-3 py-1 rounded-full font-bold text-xs flex items-center gap-1">
-                <TrendingUp className="h-3 w-3" /> +12% <span className="opacity-60 font-medium ml-1">last week</span>
-              </div>
-            </div>
-            <div className="flex gap-2 items-end h-20">
-               <svg className="w-full h-full text-amber-500" viewBox="0 0 100 40" fill="none" preserveAspectRatio="none">
-                 <path d="M0 35 Q 20 10, 40 25 T 80 5 T 100 20" stroke="currentColor" strokeWidth="3" fill="none" strokeLinecap="round" />
-                 <path d="M0 35 Q 20 10, 40 25 T 80 5 T 100 20 L 100 40 L 0 40 Z" fill="currentColor" fillOpacity="0.1" />
-               </svg>
+          <div className="relative z-10 flex flex-col items-end justify-center mt-6 md:mt-0">
+            <p className="text-blue-100 font-bold text-sm tracking-tight mb-1">vs last week</p>
+            <div className={cn(
+              "text-4xl font-black flex items-center gap-1",
+              percentageChange >= 0 ? "text-emerald-300" : "text-red-300"
+            )}>
+              {percentageChange >= 0 ? '+' : ''}{percentageChange}%
             </div>
           </div>
-
-          <div className="bg-white dark:bg-zinc-900 rounded-[32px] p-8 border border-zinc-100 dark:border-zinc-800 shadow-xl shadow-blue-500/[0.03] relative overflow-hidden">
-            <p className="text-zinc-400 dark:text-zinc-500 font-bold uppercase tracking-[0.1em] text-[10px] mb-2">Available Capacity / Day</p>
-            <div className="flex items-baseline gap-4 mb-6">
-              <h2 className="text-5xl font-black text-zinc-900 dark:text-zinc-100 tracking-tighter">6.5 hr</h2>
-              <div className="bg-cyan-50 text-cyan-600 dark:bg-cyan-500/10 dark:text-cyan-400 px-3 py-1 rounded-full font-bold text-xs flex items-center gap-1">
-                <TrendingUp className="h-3 w-3" /> +15% <span className="opacity-60 font-medium ml-1">last week</span>
-              </div>
-            </div>
-            <div className="flex gap-2 items-end h-20">
-               <svg className="w-full h-full text-cyan-500" viewBox="0 0 100 40" fill="none" preserveAspectRatio="none">
-                 <path d="M0 20 Q 25 35, 50 15 T 100 25" stroke="currentColor" strokeWidth="3" fill="none" strokeLinecap="round" />
-                 <path d="M0 20 Q 25 35, 50 15 T 100 25 L 100 40 L 0 40 Z" fill="currentColor" fillOpacity="0.1" />
-               </svg>
-            </div>
-          </div>
+          
+          {/* Decorative circles to match high-end feel */}
+          <div className="absolute top-[-50%] right-[-10%] w-80 h-80 bg-white/10 rounded-full blur-3xl pointer-events-none" />
+          <div className="absolute bottom-[-50%] left-[-10%] w-60 h-60 bg-blue-400/20 rounded-full blur-3xl pointer-events-none" />
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-8">
