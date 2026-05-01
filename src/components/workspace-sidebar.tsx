@@ -162,7 +162,7 @@ export function WorkspaceSidebar({
                   />
                 }
               >
-                <div className="flex aspect-square size-10 items-center justify-center rounded-xl bg-primary text-primary-foreground shadow-lg shadow-primary/20 shrink-0 mx-auto">
+                <div className="flex aspect-square size-10 items-center justify-center rounded-full bg-primary text-primary-foreground shadow-lg shadow-primary/20 shrink-0">
                   <SquareTerminal className="size-6" />
                 </div>
                 <div className="grid flex-1 text-left text-sm leading-tight group-data-[collapsible=icon]:hidden">
@@ -255,7 +255,7 @@ export function WorkspaceSidebar({
                     )}
                   >
                     <div className={cn(
-                      "flex size-10 shrink-0 items-center justify-center rounded-full transition-all duration-300 mx-auto",
+                      "flex size-10 shrink-0 items-center justify-center rounded-full transition-all duration-300",
                       isActive 
                         ? "bg-[#4F6EF7] text-white shadow-lg shadow-[#4F6EF7]/40" 
                         : "bg-muted text-muted-foreground group-hover:bg-accent-foreground/10"
@@ -287,12 +287,13 @@ export function WorkspaceSidebar({
                 <DialogTrigger render={
                   <SidebarMenuButton 
                     className="h-14 rounded-xl hover:bg-accent text-muted-foreground hover:text-primary transition-all text-sm font-medium group-data-[collapsible=icon]:justify-center group-data-[collapsible=icon]:px-0" 
-                  />
+                  >
+                    <div className="flex size-10 shrink-0 items-center justify-center rounded-full bg-muted/50 text-muted-foreground group-hover:bg-primary/10 group-hover:text-primary transition-all">
+                      <Plus className="size-5" />
+                    </div>
+                    <span className="group-data-[collapsible=icon]:hidden ml-3">Add Feature</span>
+                  </SidebarMenuButton>
                 }>
-                  <div className="flex size-10 shrink-0 items-center justify-center rounded-full bg-muted/50 text-muted-foreground group-hover:bg-primary/10 group-hover:text-primary transition-all mx-auto">
-                    <Plus className="size-5" />
-                  </div>
-                  <span className="group-data-[collapsible=icon]:hidden">Add Feature</span>
                 </DialogTrigger>
                 <DialogContent className="sm:max-w-[440px] bg-card border border-border text-card-foreground rounded-2xl shadow-xl p-0 overflow-hidden">
                   <div className="bg-primary/5 border-b border-border px-6 py-5">
@@ -338,7 +339,7 @@ export function WorkspaceSidebar({
               <SidebarMenuButton
                 render={
                   <a href={`/dashboard/${activeWorkspace.id}/settings`} className="flex items-center w-full">
-                     <div className="flex size-10 shrink-0 items-center justify-center rounded-full bg-muted/50 text-muted-foreground group-hover:bg-accent transition-all mx-auto">
+                     <div className="flex size-10 shrink-0 items-center justify-center rounded-full bg-muted/50 text-muted-foreground group-hover:bg-accent transition-all">
                       <Settings className="size-5" />
                     </div>
                     <span className="group-data-[collapsible=icon]:hidden ml-3">Settings</span>
