@@ -723,9 +723,8 @@ export function TaskTracker({ workspaceId, featureId, currentUser }: { workspace
                                   <span className="text-[9px] text-muted-foreground font-medium">Unassigned</span>
                                 )}
                               </div>
-                              <div className="flex items-center gap-1.5 text-[10px] font-bold text-muted-foreground">
-                                <Clock className="h-3 w-3" />
-                                <span>2 days</span>
+                              <div className="scale-[0.8] origin-right">
+                                {getStatusBadge(task.status)}
                               </div>
                             </div>
                           </div>
@@ -819,9 +818,8 @@ export function TaskTracker({ workspaceId, featureId, currentUser }: { workspace
                                   <span className="text-[8px] text-zinc-500">Unassigned</span>
                                 )}
                               </div>
-                              <div className="flex items-center gap-1 text-zinc-500 text-[8px] font-bold">
-                                <Clock className="h-3 w-3" />
-                                <span>2 days</span>
+                              <div className="mt-1 scale-[0.75] origin-left">
+                                {getStatusBadge(task.status)}
                               </div>
                             </div>
                           </div>
