@@ -122,7 +122,7 @@ export function WorkspaceSidebar({
   }
 
   return (
-    <Sidebar collapsible="icon" className="p-3 bg-transparent dark:bg-[#0D0E12] border-none">
+    <Sidebar collapsible="icon" variant="floating" className="p-4">
       {/* Create Workspace modal */}
       <Dialog open={isWorkspaceModalOpen} onOpenChange={setIsWorkspaceModalOpen}>
         <DialogContent className="sm:max-w-[425px] bg-card border border-border text-card-foreground rounded-2xl">
@@ -157,7 +157,7 @@ export function WorkspaceSidebar({
         </DialogContent>
       </Dialog>
 
-      <SidebarHeader className="bg-card dark:bg-[#0D0E12] rounded-t-2xl border-x border-t border-border pb-2 px-3 group-data-[collapsible=icon]:px-0 group-data-[collapsible=icon]:items-center">
+      <SidebarHeader className="bg-card dark:bg-[#0D0E12] rounded-t-[32px] border-b border-border pb-2 px-3 group-data-[collapsible=icon]:px-0 group-data-[collapsible=icon]:items-center">
         <SidebarMenu>
           <SidebarMenuItem>
             <DropdownMenu>
@@ -218,7 +218,7 @@ export function WorkspaceSidebar({
         </SidebarMenu>
       </SidebarHeader>
 
-      <SidebarContent className="bg-card dark:bg-[#0D0E12] border-x border-border group-data-[collapsible=icon]:px-0 px-0">
+      <SidebarContent className="bg-card dark:bg-[#0D0E12] group-data-[collapsible=icon]:px-0 px-0">
         <div className="flex flex-col h-full">
         {workspaces.length === 0 && (
           <div className="px-4 py-8 text-center space-y-4">
@@ -358,7 +358,7 @@ export function WorkspaceSidebar({
         </div>
       </SidebarContent>
 
-      <SidebarFooter className="bg-card dark:bg-[#0D0E12] rounded-b-2xl border-x border-b border-border pt-2 px-3 group-data-[collapsible=icon]:px-0">
+      <SidebarFooter className="bg-card dark:bg-[#0D0E12] rounded-b-[32px] border-t border-border pt-2 px-3 group-data-[collapsible=icon]:px-0">
         <SidebarMenu>
           <SidebarMenuItem>
             <DropdownMenu>

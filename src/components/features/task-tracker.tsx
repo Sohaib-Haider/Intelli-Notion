@@ -661,8 +661,11 @@ export function TaskTracker({ workspaceId, featureId, currentUser }: { workspace
                         <div 
                           key={task.id} 
                           onClick={() => setSelectedTask(task)}
-                          className="p-6 rounded-2xl border-2 bg-card shadow-sm transition-all group cursor-pointer hover:shadow-md"
-                          style={{ borderColor: getMemberColor(task.assignee_id || task.assignee_ids?.[0]) }}
+                          className="p-6 rounded-2xl border-2 shadow-sm transition-all group cursor-pointer hover:shadow-md backdrop-blur-md"
+                          style={{ 
+                            borderColor: getMemberColor(task.assignee_id || task.assignee_ids?.[0]),
+                            backgroundColor: `${getMemberColor(task.assignee_id || task.assignee_ids?.[0])}1A`
+                          }}
                         >
                           <div className="flex items-center justify-between mb-4">
                             <div />
@@ -745,8 +748,11 @@ export function TaskTracker({ workspaceId, featureId, currentUser }: { workspace
                         {tasks.filter(t => isSameDay(new Date(t.created_at), day)).map(task => (
                           <div 
                             key={task.id} 
-                            className="p-5 rounded-2xl border-2 bg-card shadow-sm hover:-translate-y-1 transition-all cursor-pointer hover:shadow-md"
-                            style={{ borderColor: getMemberColor(task.assignee_id || task.assignee_ids?.[0]) }}
+                            className="p-5 rounded-2xl border-2 shadow-sm hover:-translate-y-1 transition-all cursor-pointer hover:shadow-md backdrop-blur-md"
+                            style={{ 
+                              borderColor: getMemberColor(task.assignee_id || task.assignee_ids?.[0]),
+                              backgroundColor: `${getMemberColor(task.assignee_id || task.assignee_ids?.[0])}1A`
+                            }}
                             onClick={() => setSelectedTask(task)}
                           >
                             <div className="flex items-center justify-between mb-3">
@@ -831,10 +837,13 @@ export function TaskTracker({ workspaceId, featureId, currentUser }: { workspace
                           <div 
                             key={task.id} 
                             className={cn(
-                              "p-3 rounded-2xl border-2 bg-card shadow-sm transition-all hover:-translate-y-0.5 cursor-pointer flex flex-col gap-2 border-opacity-100",
+                              "p-3 rounded-2xl border-2 shadow-sm transition-all hover:-translate-y-0.5 cursor-pointer flex flex-col gap-2 border-opacity-100 backdrop-blur-md bg-opacity-10",
                               task.status === 'Done' && "opacity-50 grayscale"
                             )}
-                            style={{ borderColor: getMemberColor(task.assignee_id || task.assignee_ids?.[0]) }}
+                            style={{ 
+                              borderColor: getMemberColor(task.assignee_id || task.assignee_ids?.[0]),
+                              backgroundColor: `${getMemberColor(task.assignee_id || task.assignee_ids?.[0])}1A`
+                            }}
                             onClick={() => setSelectedTask(task)}
                           >
                             <div className="flex items-center justify-between">
