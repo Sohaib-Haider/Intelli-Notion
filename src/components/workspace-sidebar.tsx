@@ -261,7 +261,7 @@ export function WorkspaceSidebar({
                     )}>
                       {feature.type === 'OUTREACH_LOG' ? <BarChart3 className="size-5" /> : <SquareTerminal className="size-5" />}
                     </div>
-                    <span className="flex-1 truncate group-data-[collapsible=icon]:hidden">{feature.title}</span>
+                    <span className="flex-1 group-data-[collapsible=icon]:hidden whitespace-nowrap overflow-hidden">{feature.title}</span>
                     {isActive && (
                       <span className="flex h-5 min-w-5 items-center justify-center rounded-md bg-primary px-1.5 text-[10px] font-bold text-primary-foreground tabular-nums group-data-[collapsible=icon]:hidden">
                         ✓
@@ -283,9 +283,15 @@ export function WorkspaceSidebar({
             {/* Add Feature */}
             <SidebarMenuItem className="mt-1">
               <Dialog open={isFeatureModalOpen} onOpenChange={setIsFeatureModalOpen}>
-                <DialogTrigger render={<SidebarMenuButton className="h-10 rounded-xl hover:bg-accent text-muted-foreground hover:text-primary transition-all text-sm font-medium" />}>
-                  <Plus className="size-4" />
-                  <span>Add Feature</span>
+                <DialogTrigger render={
+                  <SidebarMenuButton 
+                    className="h-14 rounded-xl hover:bg-accent text-muted-foreground hover:text-primary transition-all text-sm font-medium group-data-[collapsible=icon]:justify-center group-data-[collapsible=icon]:px-0" 
+                  />
+                }>
+                  <div className="flex size-10 shrink-0 items-center justify-center rounded-full bg-muted/50 text-muted-foreground group-hover:bg-primary/10 group-hover:text-primary transition-all mx-auto">
+                    <Plus className="size-5" />
+                  </div>
+                  <span className="group-data-[collapsible=icon]:hidden">Add Feature</span>
                 </DialogTrigger>
                 <DialogContent className="sm:max-w-[440px] bg-card border border-border text-card-foreground rounded-2xl shadow-xl p-0 overflow-hidden">
                   <div className="bg-primary/5 border-b border-border px-6 py-5">
@@ -324,20 +330,21 @@ export function WorkspaceSidebar({
                 </DialogContent>
               </Dialog>
             </SidebarMenuItem>
+          </SidebarMenu>
 
-            {/* Settings — pinned at bottom like the reference image */}
-            <SidebarMenuItem className="mt-4 pt-3 border-t border-border">
+          <SidebarMenu className="mt-auto px-3 space-y-2 group-data-[collapsible=icon]:px-0">
+            <SidebarMenuItem>
               <SidebarMenuButton
                 render={
-                  <a href={`/dashboard/${activeWorkspace.id}/settings`}>
-                     <div className="flex size-9 shrink-0 items-center justify-center rounded-full bg-muted text-muted-foreground group-hover:bg-accent transition-all mx-auto">
+                  <a href={`/dashboard/${activeWorkspace.id}/settings`} className="flex items-center w-full">
+                     <div className="flex size-10 shrink-0 items-center justify-center rounded-full bg-muted/50 text-muted-foreground group-hover:bg-accent transition-all mx-auto">
                       <Settings className="size-5" />
                     </div>
-                    <span className="group-data-[collapsible=icon]:hidden">Settings</span>
+                    <span className="group-data-[collapsible=icon]:hidden ml-3">Settings</span>
                     <ChevronRight className="ml-auto size-3.5 text-muted-foreground group-data-[collapsible=icon]:hidden" />
                   </a>
                 }
-                className="h-12 rounded-xl text-muted-foreground hover:bg-accent hover:text-foreground transition-colors font-medium text-sm group-data-[collapsible=icon]:px-0 group-data-[collapsible=icon]:justify-center"
+                className="h-14 rounded-xl text-muted-foreground hover:bg-accent hover:text-foreground transition-colors font-medium text-sm group-data-[collapsible=icon]:px-0 group-data-[collapsible=icon]:justify-center"
               />
             </SidebarMenuItem>
           </SidebarMenu>
