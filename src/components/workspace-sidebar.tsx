@@ -259,7 +259,7 @@ export function WorkspaceSidebar({
                         ? "bg-[#4F6EF7] text-white shadow-lg shadow-[#4F6EF7]/40" 
                         : "bg-muted text-muted-foreground group-hover:bg-accent-foreground/10"
                     )}>
-                      {feature.type === 'OUTREACH_LOG' ? <BarChart3 className="size-4.5" /> : <SquareTerminal className="size-4.5" />}
+                      {feature.type === 'OUTREACH_LOG' ? <BarChart3 className="size-4.5" /> : <Check className="size-4.5" />}
                     </div>
                     <span className="flex-1 group-data-[collapsible=icon]:hidden whitespace-nowrap overflow-hidden font-bold tracking-tight text-sm">{feature.title}</span>
                     <Button
