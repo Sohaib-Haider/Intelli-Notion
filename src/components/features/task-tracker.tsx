@@ -61,6 +61,17 @@ export function TaskTracker({ workspaceId, featureId, currentUser }: { workspace
   const [currentDate, setCurrentDate] = React.useState(new Date())
   const [calendarView, setCalendarView] = React.useState<'day' | 'week' | 'month'>('day')
   const [selectedDate, setSelectedDate] = React.useState(new Date())
+  const dayScrollRef = React.useRef<HTMLDivElement>(null)
+
+  const scrollDays = (direction: 'left' | 'right') => {
+    if (dayScrollRef.current) {
+      const scrollAmount = 300
+      dayScrollRef.current.scrollBy({
+        left: direction === 'left' ? -scrollAmount : scrollAmount,
+        behavior: 'smooth'
+      })
+    }
+  }
 
   React.useEffect(() => {
     loadData()
@@ -564,33 +575,56 @@ export function TaskTracker({ workspaceId, featureId, currentUser }: { workspace
 
             {calendarView === 'day' && (
               <div className="flex flex-col flex-1">
-                <div className="flex items-center gap-2 p-4 overflow-x-auto border-b border-border no-scrollbar bg-muted/20">
-                  {(() => {
-                    const monthStart = startOfMonth(currentDate)
-                    const monthEnd = endOfMonth(monthStart)
-                    const days = eachDayOfInterval({ start: monthStart, end: monthEnd })
-                    return days.map(day => (
-                      <button
-                        key={day.toISOString()}
-                        onClick={() => setSelectedDate(day)}
-                        className={cn(
-                          "flex flex-col items-center justify-center min-w-[60px] h-[80px] rounded-2xl border transition-all duration-300",
-                          isSameDay(day, selectedDate) 
-                            ? "bg-[#4F6EF7] border-[#4F6EF7] text-white shadow-lg shadow-[#4F6EF7]/20 scale-105" 
-                            : "bg-card border-border text-muted-foreground hover:border-[#4F6EF7]/40 hover:text-foreground"
-                        )}
-                      >
-                        <span className="text-[10px] font-bold uppercase tracking-widest mb-1">{format(day, 'eee')}</span>
-                        <span className="text-xl font-black">{format(day, 'd')}</span>
-                        {tasks.some(t => isSameDay(new Date(t.created_at), day)) && (
-                          <div className={cn(
-                            "w-1.5 h-1.5 rounded-full mt-1",
-                            isSameDay(day, selectedDate) ? "bg-white" : "bg-blue-500"
-                          )} />
-                        )}
-                      </button>
-                    ))
-                  })()}
+                <div className="relative group">
+                  <Button 
+                    variant="ghost" 
+                    size="icon" 
+                    className="absolute left-2 top-1/2 -translate-y-1/2 z-10 h-10 w-10 rounded-full bg-background/80 backdrop-blur shadow-md opacity-0 group-hover:opacity-100 transition-opacity border border-border"
+                    onClick={() => scrollDays('left')}
+                  >
+                    <ChevronLeft className="h-5 w-5" />
+                  </Button>
+                  
+                  <div 
+                    ref={dayScrollRef}
+                    className="flex items-center gap-2 p-4 overflow-x-auto border-b border-border no-scrollbar bg-muted/20 scroll-smooth"
+                  >
+                    {(() => {
+                      const monthStart = startOfMonth(currentDate)
+                      const monthEnd = endOfMonth(monthStart)
+                      const days = eachDayOfInterval({ start: monthStart, end: monthEnd })
+                      return days.map(day => (
+                        <button
+                          key={day.toISOString()}
+                          onClick={() => setSelectedDate(day)}
+                          className={cn(
+                            "flex flex-col items-center justify-center min-w-[60px] h-[80px] rounded-2xl border transition-all duration-300",
+                            isSameDay(day, selectedDate) 
+                              ? "bg-[#4F6EF7] border-[#4F6EF7] text-white shadow-lg shadow-[#4F6EF7]/20 scale-105" 
+                              : "bg-card border-border text-muted-foreground hover:border-[#4F6EF7]/40 hover:text-foreground"
+                          )}
+                        >
+                          <span className="text-[10px] font-bold uppercase tracking-widest mb-1">{format(day, 'eee')}</span>
+                          <span className="text-xl font-black">{format(day, 'd')}</span>
+                          {tasks.some(t => isSameDay(new Date(t.created_at), day)) && (
+                            <div className={cn(
+                              "w-1.5 h-1.5 rounded-full mt-1",
+                              isSameDay(day, selectedDate) ? "bg-white" : "bg-blue-500"
+                            )} />
+                          )}
+                        </button>
+                      ))
+                    })()}
+                  </div>
+
+                  <Button 
+                    variant="ghost" 
+                    size="icon" 
+                    className="absolute right-2 top-1/2 -translate-y-1/2 z-10 h-10 w-10 rounded-full bg-background/80 backdrop-blur shadow-md opacity-0 group-hover:opacity-100 transition-opacity border border-border"
+                    onClick={() => scrollDays('right')}
+                  >
+                    <ChevronRight className="h-5 w-5" />
+                  </Button>
                 </div>
                 
                 <div className="flex-1 p-8">
