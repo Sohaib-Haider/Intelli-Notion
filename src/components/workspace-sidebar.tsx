@@ -233,7 +233,8 @@ export function WorkspaceSidebar({
         )}
 
         {activeWorkspace && (
-          <SidebarMenu className="mt-2 px-3 space-y-2 group-data-[collapsible=icon]:px-0">
+          <>
+            <SidebarMenu className="mt-2 px-3 space-y-2 group-data-[collapsible=icon]:px-0">
             <div className="mb-1 px-2 text-[10px] font-bold uppercase tracking-[0.15em] text-muted-foreground group-data-[collapsible=icon]:hidden">
               Features
             </div>
@@ -347,7 +348,8 @@ export function WorkspaceSidebar({
                 className="h-14 rounded-xl text-muted-foreground hover:bg-accent hover:text-foreground transition-colors font-medium text-sm group-data-[collapsible=icon]:px-0 group-data-[collapsible=icon]:justify-center"
               />
             </SidebarMenuItem>
-          </SidebarMenu>
+            </SidebarMenu>
+          </>
         )}
         </div>
       </SidebarContent>
