@@ -339,7 +339,7 @@ export function TaskTracker({ workspaceId, featureId, currentUser }: { workspace
                                 const m = members.find(mem => mem.user_id === id)
                                 const name = m ? (m.profiles?.full_name?.split(' ')[0] || `User`) : 'Unknown'
                                 return (
-                                  <span key={id} className={cn("text-[10px] px-2 py-0.5 rounded-full font-bold tracking-wider whitespace-nowrap", getUserColor(id))}>
+                                  <span key={id} className="text-[10px] px-2 py-0.5 rounded-full font-bold tracking-wider whitespace-nowrap text-white" style={{ backgroundColor: getMemberColor(id) }}>
                                     {name}
                                   </span>
                                 )
@@ -740,7 +740,7 @@ export function TaskTracker({ workspaceId, featureId, currentUser }: { workspace
                                     const m = members.find(mem => mem.user_id === id)
                                     const name = m ? (m.profiles?.full_name?.split(' ')[0] || `User`) : 'Unknown'
                                     return (
-                                      <span key={id} className={cn("text-[9px] px-1.5 py-0.5 rounded-md font-bold tracking-wider", getUserColor(id))}>
+                                      <span key={id} className="text-[9px] px-1.5 py-0.5 rounded-md font-bold tracking-wider text-white" style={{ backgroundColor: getMemberColor(id) }}>
                                         {name}
                                       </span>
                                     )
@@ -835,7 +835,7 @@ export function TaskTracker({ workspaceId, featureId, currentUser }: { workspace
                                     const m = members.find(mem => mem.user_id === id)
                                     const name = m ? (m.profiles?.full_name?.split(' ')[0] || `User`) : 'Unknown'
                                     return (
-                                      <span key={id} className={cn("text-[8px] px-1 py-0.5 rounded font-bold tracking-wider", getUserColor(id))}>
+                                      <span key={id} className="text-[8px] px-1 py-0.5 rounded font-bold tracking-wider text-white" style={{ backgroundColor: getMemberColor(id) }}>
                                         {name}
                                       </span>
                                     )
@@ -875,7 +875,7 @@ export function TaskTracker({ workspaceId, featureId, currentUser }: { workspace
                   <div className="flex items-center gap-4">
                     {selectedTask.assignee_ids?.[0] && (
                        <Avatar className="h-12 w-12 border-2 border-white dark:border-zinc-800 shadow-sm">
-                         <AvatarFallback className={cn("text-lg font-bold text-white", getUserColor(selectedTask.assignee_ids[0]))}>
+                         <AvatarFallback className="text-lg font-bold text-white" style={{ backgroundColor: getMemberColor(selectedTask.assignee_ids[0]) }}>
                            {members.find(m => m.user_id === selectedTask.assignee_ids[0])?.profiles?.full_name?.[0] || 'U'}
                          </AvatarFallback>
                        </Avatar>
@@ -915,7 +915,7 @@ export function TaskTracker({ workspaceId, featureId, currentUser }: { workspace
                    <div className="flex -space-x-2">
                       {selectedTask.assignee_ids?.map((id: string) => (
                         <Avatar key={id} className="h-10 w-10 border-4 border-zinc-900">
-                          <AvatarFallback className={cn("text-sm font-bold text-white", getUserColor(id))}>
+                          <AvatarFallback className="text-sm font-bold text-white" style={{ backgroundColor: getMemberColor(id) }}>
                             {members.find(m => m.user_id === id)?.profiles?.full_name?.[0] || 'U'}
                           </AvatarFallback>
                         </Avatar>
