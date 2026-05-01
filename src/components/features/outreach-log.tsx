@@ -107,7 +107,7 @@ export function OutreachLog({ workspaceId, featureId, currentUser }: { workspace
   const percentageChange = lastWeekTotal === 0 ? 100 : Math.round(((thisWeekTotal - lastWeekTotal) / lastWeekTotal) * 100)
 
   return (
-    <div className="flex flex-col h-full bg-[#F8FAFF] dark:bg-[#0d0d0d] text-zinc-900 dark:text-zinc-100 overflow-y-auto scrollbar-hide -m-8 p-8 transition-all duration-500">
+    <div className="flex flex-col bg-background text-zinc-900 dark:text-zinc-100 transition-all duration-500">
       <div className="flex items-center justify-between mb-10">
         <div>
           <h1 className="text-4xl font-black text-zinc-900 dark:text-zinc-100 tracking-tight">Dashboard</h1>
@@ -306,5 +306,4 @@ export function OutreachLog({ workspaceId, featureId, currentUser }: { workspace
       </div>
     </div>
   )
-
 }

@@ -45,8 +45,8 @@ export default async function DashboardLayout({
             </div>
           </div>
         </header>
-        <div className="flex-1 overflow-auto px-10 pb-10 transition-all">
-          <div className="h-full w-full">
+        <div className="flex-1 overflow-y-auto scrollbar-thin px-10 pb-10 transition-all scroll-smooth">
+          <div className="min-h-full w-full">
             {children}
           </div>
         </div>

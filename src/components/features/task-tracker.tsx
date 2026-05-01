@@ -89,7 +89,7 @@ export function TaskTracker({ workspaceId, featureId, currentUser }: { workspace
       setNewTaskTitle('')
       setNewTaskDescription('')
       setNewTaskAssignees([])
-      setNewTaskStatus('Not started')
+      setNewTaskStatus('To Do')
       loadData()
     } else {
       alert("Error creating task: " + result.error)
@@ -121,7 +121,7 @@ export function TaskTracker({ workspaceId, featureId, currentUser }: { workspace
       const result = await deleteTask(taskId)
       if (result?.error) {
         setTasks(originalTasks)
-        alert(res.error)
+        alert(result.error)
       }
     }
   }
@@ -153,10 +153,8 @@ export function TaskTracker({ workspaceId, featureId, currentUser }: { workspace
     return colors[index]
   }
 
-
-
   return (
-    <div className="flex flex-col h-full bg-background text-foreground overflow-y-auto scrollbar-hide -m-8 p-8 transition-all duration-300">
+    <div className="flex flex-col bg-background text-zinc-900 dark:text-zinc-100 transition-all duration-500">
       <div className="flex items-center justify-between mb-8">
         <div>
           <h1 className="text-5xl font-black text-foreground tracking-tighter drop-shadow-sm">Tasks Tracker</h1>
@@ -328,8 +326,8 @@ export function TaskTracker({ workspaceId, featureId, currentUser }: { workspace
                           {getStatusBadge(task.status)}
                         </SelectTrigger>
                         <SelectContent className="bg-card border-border text-foreground">
-                          <SelectItem value="Not started">Not started</SelectItem>
-                          <SelectItem value="In progress">In progress</SelectItem>
+                          <SelectItem value="To Do">To Do</SelectItem>
+                          <SelectItem value="In Progress">In Progress</SelectItem>
                           <SelectItem value="Done">Done</SelectItem>
                         </SelectContent>
                       </Select>
@@ -406,7 +404,7 @@ export function TaskTracker({ workspaceId, featureId, currentUser }: { workspace
                     {tasks.filter(t => t.status === columnStatus).length}
                   </span>
                 </div>
-                <div className="flex-1 space-y-3 overflow-y-auto">
+                <div className="flex-1 space-y-3 overflow-y-auto no-scrollbar">
                   {tasks.filter(t => t.status === columnStatus).map(task => (
                     <div key={task.id} className="bg-card border border-border p-4 rounded-xl shadow-sm hover:border-primary/30 hover:shadow-md transition-all group">
                       <div 
@@ -499,7 +497,7 @@ export function TaskTracker({ workspaceId, featureId, currentUser }: { workspace
               <div key={task.id} className="flex items-center gap-3 p-3 rounded-xl border border-border bg-card hover:bg-muted/40 group transition-colors">
                 <Checkbox 
                   checked={task.status === 'Done'}
-                  onCheckedChange={(checked) => handleStatusChange(task.id, checked ? 'Done' : 'Not started')}
+                  onCheckedChange={(checked) => handleStatusChange(task.id, checked ? 'Done' : 'To Do')}
                   className="border-border data-[state=checked]:bg-[#4F6EF7] data-[state=checked]:border-[#4F6EF7]"
                 />
                 {getStatusBadge(task.status)}
@@ -566,7 +564,7 @@ export function TaskTracker({ workspaceId, featureId, currentUser }: { workspace
 
             {calendarView === 'day' && (
               <div className="flex flex-col flex-1">
-                <div className="flex items-center gap-2 p-4 overflow-x-auto border-b border-border scrollbar-hide bg-muted/20">
+                <div className="flex items-center gap-2 p-4 overflow-x-auto border-b border-border no-scrollbar bg-muted/20">
                   {(() => {
                     const monthStart = startOfMonth(currentDate)
                     const monthEnd = endOfMonth(monthStart)
@@ -595,7 +593,7 @@ export function TaskTracker({ workspaceId, featureId, currentUser }: { workspace
                   })()}
                 </div>
                 
-                <div className="flex-1 p-8 overflow-y-auto">
+                <div className="flex-1 p-8">
                   <div className="max-w-4xl mx-auto">
                     <div className="flex items-center justify-between mb-8">
                       <div>
@@ -645,7 +643,10 @@ export function TaskTracker({ workspaceId, featureId, currentUser }: { workspace
                                 <span className="text-sm font-medium text-muted-foreground">Unassigned</span>
                               )}
                             </div>
-                            <Button variant="ghost" size="icon" className="text-muted-foreground hover:text-red-400" onClick={() => handleDeleteTask(task.id)}>
+                            <Button variant="ghost" size="icon" className="text-muted-foreground hover:text-red-400" onClick={(e) => {
+                              e.stopPropagation()
+                              handleDeleteTask(task.id)
+                            }}>
                               <Trash2 className="h-4 w-4" />
                             </Button>
                           </div>
@@ -666,7 +667,7 @@ export function TaskTracker({ workspaceId, featureId, currentUser }: { workspace
             )}
 
             {calendarView === 'week' && (
-              <div className="flex flex-1 overflow-x-auto bg-background scrollbar-thin scrollbar-thumb-muted-foreground/20">
+              <div className="flex flex-1 overflow-x-auto bg-background no-scrollbar">
                 {(() => {
                   const weekStart = startOfWeek(currentDate, { weekStartsOn: 1 })
                   const days = Array.from({ length: 7 }, (_, i) => {
@@ -692,7 +693,7 @@ export function TaskTracker({ workspaceId, featureId, currentUser }: { workspace
                           {tasks.filter(t => isSameDay(new Date(t.created_at), day)).length}
                         </Badge>
                       </div>
-                      <div className="flex-1 p-6 space-y-4 overflow-y-auto bg-background scrollbar-thin scrollbar-thumb-muted-foreground/20">
+                      <div className="flex-1 p-6 space-y-4 bg-background">
                         {tasks.filter(t => isSameDay(new Date(t.created_at), day)).map(task => (
                           <div 
                             key={task.id} 
@@ -778,7 +779,7 @@ export function TaskTracker({ workspaceId, featureId, currentUser }: { workspace
                           {format(day, 'd')}
                         </span>
                       </div>
-                      <div className="flex-1 space-y-2 overflow-y-auto pr-1 scrollbar-thin scrollbar-thumb-muted">
+                      <div className="flex-1 space-y-2 pr-1 no-scrollbar">
                         {dayTasks.map(task => (
                           <div 
                             key={task.id} 

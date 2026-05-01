@@ -127,9 +127,12 @@
   body {
     @apply bg-background text-foreground;
     font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+    scroll-behavior: smooth;
+    overscroll-behavior-y: none;
   }
   html {
     @apply font-sans;
+    scroll-behavior: smooth;
   }
 }
 
