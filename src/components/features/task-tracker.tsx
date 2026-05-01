@@ -281,10 +281,10 @@ export function TaskTracker({ workspaceId, featureId, currentUser }: { workspace
               ★ Overview
             </TabsTrigger>
             <TabsTrigger value="status" className="data-[state=active]:bg-primary data-[state=active]:text-primary-foreground data-[state=active]:shadow-sm text-muted-foreground rounded-lg transition-all px-6 py-2 font-semibold text-[11px] uppercase tracking-wider">
-              ➔ Kanban
+              By Status
             </TabsTrigger>
             <TabsTrigger value="me" className="data-[state=active]:bg-primary data-[state=active]:text-primary-foreground data-[state=active]:shadow-sm text-muted-foreground rounded-lg transition-all px-6 py-2 font-semibold text-[11px] uppercase tracking-wider">
-              👤 Mine
+              👤 My Tasks
             </TabsTrigger>
             <TabsTrigger value="checklist" className="data-[state=active]:bg-primary data-[state=active]:text-primary-foreground data-[state=active]:shadow-sm text-muted-foreground rounded-lg transition-all px-6 py-2 font-semibold text-[11px] uppercase tracking-wider">
               ✓ List
