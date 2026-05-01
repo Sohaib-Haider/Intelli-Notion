@@ -110,7 +110,7 @@ export function OutreachLog({ workspaceId, featureId, currentUser }: { workspace
         </div>
         <div className="flex gap-3">
           <Dialog open={isLogModalOpen} onOpenChange={setIsLogModalOpen}>
-            <DialogTrigger render={<Button className="bg-primary hover:bg-primary/90 text-white rounded-xl px-8 h-12 font-bold shadow-xl shadow-primary/20 transition-all active:scale-95" />}>
+            <DialogTrigger render={<Button className="bg-[#4F6EF7] hover:bg-[#4F6EF7]/90 text-white rounded-xl px-8 h-12 font-bold shadow-xl shadow-blue-500/30 transition-all active:scale-95" />}>
               <Plus className="mr-2 h-5 w-5" /> Log Outreach
             </DialogTrigger>
             <DialogContent className="sm:max-w-[500px] bg-white/80 dark:bg-zinc-900/80 backdrop-blur-2xl border-zinc-200 dark:border-zinc-800 text-zinc-900 dark:text-zinc-100 p-0 overflow-hidden rounded-[32px] shadow-2xl">

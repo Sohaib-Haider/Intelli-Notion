@@ -169,17 +169,17 @@ export function TaskTracker({ workspaceId, featureId, currentUser }: { workspace
           </div>
           
           <Dialog open={isNewTaskOpen} onOpenChange={setIsNewTaskOpen}>
-            <DialogTrigger render={<Button className="bg-primary hover:bg-primary/90 text-primary-foreground rounded-xl px-6 h-10 font-semibold shadow-sm transition-all active:scale-95" />}>
+            <DialogTrigger render={<Button className="bg-[#4F6EF7] hover:bg-[#4F6EF7]/90 text-white rounded-xl px-6 h-10 font-bold shadow-lg shadow-blue-500/20 transition-all active:scale-95" />}>
               <Plus className="mr-2 h-4 w-4" /> New Task
             </DialogTrigger>
-            <DialogContent className="sm:max-w-[600px] w-[95vw] max-h-[90vh] flex flex-col bg-card border border-border text-card-foreground p-0 overflow-hidden rounded-2xl shadow-xl">
-               <div className="bg-primary p-6 text-primary-foreground relative overflow-hidden shrink-0">
+            <DialogContent className="sm:max-w-[600px] w-[95vw] max-h-[90vh] flex flex-col bg-card dark:bg-[#0D0E12] border border-border text-card-foreground p-0 overflow-hidden rounded-[32px] shadow-2xl">
+               <div className="bg-[#4F6EF7] p-10 text-white relative overflow-hidden shrink-0">
                  <div className="absolute top-[-20%] right-[-10%] w-40 h-40 bg-white/20 rounded-full blur-3xl" />
                  <DialogHeader>
                    <DialogTitle className="text-3xl font-black tracking-tight">Create Task</DialogTitle>
                  </DialogHeader>
                </div>
-               <div className="flex-1 overflow-y-auto p-6 md:p-10 no-scrollbar">
+               <div className="flex-1 overflow-y-auto p-10 no-scrollbar">
                  <form onSubmit={handleCreateTask} className="space-y-8">
                    <div className="space-y-3">
                      <label className="text-xs font-black uppercase tracking-[0.2em] text-zinc-400">Task Title</label>
