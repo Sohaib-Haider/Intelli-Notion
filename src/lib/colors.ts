@@ -1,9 +1,9 @@
 export const MEMBER_COLORS = [
-  '#4F6EF7', // Royal Blue
-  '#E85D75', // Rose Pink
   '#2DB89A', // Emerald Teal
-  '#EF9F27', // Amber Orange
+  '#E85D75', // Rose Pink
   '#8B5CF6', // Vivid Purple
+  '#4F6EF7', // Royal Blue
+  '#EF9F27', // Amber Orange
   '#F43F5E', // Rose Red
   '#06B6D4', // Cyan
   '#F59E0B', // Amber
@@ -23,7 +23,8 @@ export function getMemberColor(id: string) {
     hash = id.charCodeAt(i) + ((hash << 5) - hash)
   }
   
-  const index = Math.abs(hash) % MEMBER_COLORS.length
+  // Use a salt to ensure a better distribution and change existing assignments
+  const index = Math.abs(hash + 7) % MEMBER_COLORS.length
   return MEMBER_COLORS[index]
 }
 
