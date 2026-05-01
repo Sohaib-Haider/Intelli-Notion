@@ -309,71 +309,79 @@ export function TaskTracker({ workspaceId, featureId, currentUser }: { workspace
               </TableHeader>
               <TableBody>
                 {tasks.map((task) => (
-                  <TableRow key={task.id} className="border-border hover:bg-muted/40 transition-colors">
+                  <TableRow 
+                    key={task.id} 
+                    className="border-border hover:bg-muted/40 transition-colors cursor-pointer group"
+                    onClick={() => setSelectedTask(task)}
+                  >
                     <TableCell className="font-semibold text-foreground">
-                      <button 
-                        onClick={() => setSelectedTask(task)}
-                        className="flex items-center text-left hover:text-primary transition-colors"
-                      >
+                      <div className="flex items-center text-left group-hover:text-primary transition-colors">
                         <span className="truncate max-w-[300px]">{task.title}</span>
-                      </button>
+                      </div>
                     </TableCell>
                     <TableCell>
-                      <Select value={task.status} onValueChange={(val) => handleStatusChange(task.id, val)}>
-                        <SelectTrigger hideIcon className="bg-transparent border-0 h-auto p-0 hover:bg-muted/50 focus:ring-0">
-                          {getStatusBadge(task.status)}
-                        </SelectTrigger>
-                        <SelectContent className="bg-card border-border text-foreground">
-                          <SelectItem value="To Do">To Do</SelectItem>
-                          <SelectItem value="In Progress">In Progress</SelectItem>
-                          <SelectItem value="Done">Done</SelectItem>
-                        </SelectContent>
-                      </Select>
+                      <div onClick={(e) => e.stopPropagation()}>
+                        <Select value={task.status} onValueChange={(val) => handleStatusChange(task.id, val)}>
+                          <SelectTrigger hideIcon className="bg-transparent border-0 h-auto p-0 hover:bg-muted/50 focus:ring-0">
+                            {getStatusBadge(task.status)}
+                          </SelectTrigger>
+                          <SelectContent className="bg-card border-border text-foreground">
+                            <SelectItem value="To Do">To Do</SelectItem>
+                            <SelectItem value="In Progress">In Progress</SelectItem>
+                            <SelectItem value="Done">Done</SelectItem>
+                          </SelectContent>
+                        </Select>
+                      </div>
                     </TableCell>
                     <TableCell>
-                      <Popover>
-                        <PopoverTrigger className="flex h-auto p-1 hover:bg-muted justify-start w-full rounded-md border-0 items-center bg-transparent text-sm">
-                          {task.assignee_ids && task.assignee_ids.length > 0 ? (
-                            <div className="flex gap-1 overflow-x-auto scrollbar-hide max-w-[150px] items-center">
-                              {task.assignee_ids.map((id: string) => {
-                                const m = members.find(mem => mem.user_id === id)
-                                const name = m ? (m.profiles?.full_name?.split(' ')[0] || `User`) : 'Unknown'
+                      <div onClick={(e) => e.stopPropagation()}>
+                        <Popover>
+                          <PopoverTrigger className="flex h-auto p-1 hover:bg-muted justify-start w-full rounded-md border-0 items-center bg-transparent text-sm">
+                            {task.assignee_ids && task.assignee_ids.length > 0 ? (
+                              <div className="flex gap-1 overflow-x-auto scrollbar-hide max-w-[150px] items-center">
+                                {task.assignee_ids.map((id: string) => {
+                                  const m = members.find(mem => mem.user_id === id)
+                                  const name = m ? (m.profiles?.full_name?.split(' ')[0] || `User`) : 'Unknown'
+                                  return (
+                                    <span key={id} className="text-[10px] px-2 py-0.5 rounded-full font-bold tracking-wider whitespace-nowrap text-white" style={{ backgroundColor: getMemberColor(id) }}>
+                                      {name}
+                                    </span>
+                                  )
+                                })}
+                              </div>
+                            ) : (
+                              <span className="text-zinc-500 text-sm">Unassigned</span>
+                            )}
+                          </PopoverTrigger>
+                          <PopoverContent className="w-64 p-0 bg-card border-border">
+                            <div className="p-2 space-y-1">
+                              {members.map(m => {
+                                const isSelected = (task.assignee_ids || []).includes(m.user_id)
                                 return (
-                                  <span key={id} className="text-[10px] px-2 py-0.5 rounded-full font-bold tracking-wider whitespace-nowrap text-white" style={{ backgroundColor: getMemberColor(id) }}>
-                                    {name}
-                                  </span>
+                                  <div key={m.user_id} className="flex items-center space-x-2 p-2 hover:bg-muted rounded-md cursor-pointer" onClick={() => {
+                                    const newIds = isSelected 
+                                      ? (task.assignee_ids || []).filter((id: string) => id !== m.user_id)
+                                      : [...(task.assignee_ids || []), m.user_id]
+                                    handleAssigneesChange(task.id, newIds)
+                                  }}>
+                                    <Checkbox checked={isSelected} className="border-border data-[state=checked]:bg-[#4F6EF7] data-[state=checked]:border-[#4F6EF7] pointer-events-none" />
+                                    <span className="text-sm text-foreground flex-1">{m.user_id === currentUser.id ? 'Me' : (m.profiles?.full_name || `User ${m.user_id.substring(0,4)}`)}</span>
+                                  </div>
                                 )
                               })}
                             </div>
-                          ) : (
-                            <span className="text-zinc-500 text-sm">Unassigned</span>
-                          )}
-                        </PopoverTrigger>
-                        <PopoverContent className="w-64 p-0 bg-card border-border">
-                          <div className="p-2 space-y-1">
-                            {members.map(m => {
-                              const isSelected = (task.assignee_ids || []).includes(m.user_id)
-                              return (
-                                <div key={m.user_id} className="flex items-center space-x-2 p-2 hover:bg-muted rounded-md cursor-pointer" onClick={() => {
-                                  const newIds = isSelected 
-                                    ? (task.assignee_ids || []).filter((id: string) => id !== m.user_id)
-                                    : [...(task.assignee_ids || []), m.user_id]
-                                  handleAssigneesChange(task.id, newIds)
-                                }}>
-                                  <Checkbox checked={isSelected} className="border-border data-[state=checked]:bg-[#4F6EF7] data-[state=checked]:border-[#4F6EF7] pointer-events-none" />
-                                  <span className="text-sm text-foreground flex-1">{m.user_id === currentUser.id ? 'Me' : (m.profiles?.full_name || `User ${m.user_id.substring(0,4)}`)}</span>
-                                </div>
-                              )
-                            })}
-                          </div>
-                        </PopoverContent>
-                      </Popover>
+                          </PopoverContent>
+                        </Popover>
+                      </div>
                     </TableCell>
                     <TableCell className="text-zinc-400 text-sm">
                       {format(new Date(task.created_at), 'MMM d, yyyy')}
                     </TableCell>
                     <TableCell className="text-right">
-                      <Button variant="ghost" size="icon" className="h-8 w-8 text-zinc-500 hover:text-red-400 hover:bg-red-950/30" onClick={() => handleDeleteTask(task.id)}>
+                      <Button variant="ghost" size="icon" className="h-8 w-8 text-zinc-500 hover:text-red-400 hover:bg-red-950/30" onClick={(e) => {
+                        e.stopPropagation()
+                        handleDeleteTask(task.id)
+                      }}>
                         <Trash2 className="h-4 w-4" />
                       </Button>
                     </TableCell>
