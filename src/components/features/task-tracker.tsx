@@ -52,7 +52,7 @@ export function TaskTracker({ workspaceId, featureId, currentUser }: { workspace
   const [isNewTaskOpen, setIsNewTaskOpen] = React.useState(false)
   
   const [newTaskTitle, setNewTaskTitle] = React.useState('')
-  const [newTaskStatus, setNewTaskStatus] = React.useState('Not started')
+  const [newTaskStatus, setNewTaskStatus] = React.useState('To Do')
   const [newTaskDescription, setNewTaskDescription] = React.useState('')
   const [newTaskAssignees, setNewTaskAssignees] = React.useState<string[]>([])
   const [newTaskDueDate, setNewTaskDueDate] = React.useState(format(new Date(), 'yyyy-MM-dd'))
@@ -130,10 +130,10 @@ export function TaskTracker({ workspaceId, featureId, currentUser }: { workspace
     switch (status) {
       case 'Done':
         return <Badge variant="outline" className="bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border-emerald-500/20"><CheckCircle2 className="mr-1 h-3 w-3" /> Done</Badge>
-      case 'In progress':
-        return <Badge variant="outline" className="bg-[#4F6EF7]/10 text-[#4F6EF7] border-[#4F6EF7]/20"><Clock className="mr-1 h-3 w-3" /> In progress</Badge>
+      case 'In Progress':
+        return <Badge variant="outline" className="bg-[#4F6EF7]/10 text-[#4F6EF7] border-[#4F6EF7]/20"><Clock className="mr-1 h-3 w-3" /> In Progress</Badge>
       default:
-        return <Badge variant="outline" className="bg-muted text-muted-foreground border-border"><Circle className="mr-1 h-3 w-3" /> Not started</Badge>
+        return <Badge variant="outline" className="bg-muted text-muted-foreground border-border"><Circle className="mr-1 h-3 w-3" /> To Do</Badge>
     }
   }
 
@@ -214,8 +214,8 @@ export function TaskTracker({ workspaceId, featureId, currentUser }: { workspace
                            <SelectValue />
                          </SelectTrigger>
                          <SelectContent className="bg-white dark:bg-zinc-900 border-zinc-100 dark:border-zinc-800 rounded-[20px]">
-                           <SelectItem value="Not started">Not started</SelectItem>
-                           <SelectItem value="In progress">In progress</SelectItem>
+                           <SelectItem value="To Do">To Do</SelectItem>
+                           <SelectItem value="In Progress">In Progress</SelectItem>
                            <SelectItem value="Done">Done</SelectItem>
                          </SelectContent>
                        </Select>
@@ -397,7 +397,7 @@ export function TaskTracker({ workspaceId, featureId, currentUser }: { workspace
 
         <TabsContent value="status" className="flex-1 mt-4">
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6 h-full">
-            {['Not started', 'In progress', 'Done'].map(columnStatus => (
+            {['To Do', 'In Progress', 'Done'].map(columnStatus => (
               <div key={columnStatus} className="flex flex-col bg-muted/40 rounded-xl p-4 border border-border">
                 <div className="flex items-center gap-2 mb-4">
                   {getStatusBadge(columnStatus)}
