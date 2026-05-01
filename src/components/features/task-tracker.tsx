@@ -532,25 +532,40 @@ export function TaskTracker({ workspaceId, featureId, currentUser }: { workspace
                 </h3>
                 <div className="flex bg-muted rounded-lg p-1 border border-border">
                   <Button 
-                    variant={calendarView === 'day' ? 'secondary' : 'ghost'} 
+                    variant="ghost"
                     size="sm" 
-                    className="h-7 text-[10px] font-bold uppercase tracking-wider"
+                    className={cn(
+                      "h-8 px-4 text-[10px] font-black uppercase tracking-widest transition-all duration-300 rounded-lg",
+                      calendarView === 'day' 
+                        ? "bg-[#4F6EF7] text-white shadow-lg shadow-blue-500/30" 
+                        : "text-muted-foreground hover:text-foreground hover:bg-muted"
+                    )}
                     onClick={() => setCalendarView('day')}
                   >
                     Day
                   </Button>
                   <Button 
-                    variant={calendarView === 'week' ? 'secondary' : 'ghost'} 
+                    variant="ghost"
                     size="sm" 
-                    className="h-7 text-[10px] font-bold uppercase tracking-wider"
+                    className={cn(
+                      "h-8 px-4 text-[10px] font-black uppercase tracking-widest transition-all duration-300 rounded-lg",
+                      calendarView === 'week' 
+                        ? "bg-[#4F6EF7] text-white shadow-lg shadow-blue-500/30" 
+                        : "text-muted-foreground hover:text-foreground hover:bg-muted"
+                    )}
                     onClick={() => setCalendarView('week')}
                   >
                     Week
                   </Button>
                   <Button 
-                    variant={calendarView === 'month' ? 'secondary' : 'ghost'} 
+                    variant="ghost"
                     size="sm" 
-                    className="h-7 text-[10px] font-bold uppercase tracking-wider"
+                    className={cn(
+                      "h-8 px-4 text-[10px] font-black uppercase tracking-widest transition-all duration-300 rounded-lg",
+                      calendarView === 'month' 
+                        ? "bg-[#4F6EF7] text-white shadow-lg shadow-blue-500/30" 
+                        : "text-muted-foreground hover:text-foreground hover:bg-muted"
+                    )}
                     onClick={() => setCalendarView('month')}
                   >
                     Month
