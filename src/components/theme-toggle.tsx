@@ -9,7 +9,6 @@ export function ThemeToggle() {
   const { theme, setTheme } = useTheme()
   const [mounted, setMounted] = React.useState(false)
 
-  // Avoid hydration mismatch by only rendering after mount
   React.useEffect(() => {
     setMounted(true)
   }, [])
@@ -26,7 +25,7 @@ export function ThemeToggle() {
     <Button
       variant="ghost"
       size="icon"
-      className="text-zinc-400 hover:text-zinc-100 dark:hover:text-zinc-100 transition-colors"
+      className="text-zinc-400 hover:text-zinc-900 dark:hover:text-zinc-100 transition-colors"
       onClick={() => setTheme(theme === 'dark' ? 'light' : 'dark')}
       title={theme === 'dark' ? 'Switch to Light Mode' : 'Switch to Dark Mode'}
     >

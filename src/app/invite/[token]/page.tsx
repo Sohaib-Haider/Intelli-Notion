@@ -48,7 +48,7 @@ export default async function InvitePage({ params }: PageProps) {
           <CheckCircle className="h-8 w-8 text-blue-500" />
         </div>
         <div>
-          <h1 className="text-2xl font-bold mb-2">You've been invited!</h1>
+          <h1 className="text-2xl font-bold mb-2">You&apos;ve been invited!</h1>
           <p className="text-zinc-400">
             You have been invited to join the workspace as a <strong className="text-zinc-200 capitalize">{invite.role}</strong>.
           </p>

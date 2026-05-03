@@ -1,32 +1,41 @@
 'use server'
 
 import { createClient } from '@/utils/supabase/server'
-import { revalidatePath } from 'next/cache'
+import { createAdminClient } from '@/utils/supabase/admin'
+import { revalidatePath, revalidateTag, unstable_cache } from 'next/cache'
 
-export async function getMembers(workspaceId: string) {
-  const supabase = await createClient()
-  
-  const { data, error } = await supabase
-    .from('workspace_members')
-    .select('*')
-    .eq('workspace_id', workspaceId)
-
-  if (error) {
-    console.error('Error fetching members:', error)
-    return []
-  }
-  return data
-}
-
-export async function getInvites(workspaceId: string) {
-  const supabase = await createClient()
-  const { data, error } = await supabase
-    .from('workspace_invites')
-    .select('*')
-    .eq('workspace_id', workspaceId)
+export const getMembers = unstable_cache(
+  async (workspaceId: string) => {
+    const supabase = await createAdminClient()
     
-  return data || []
-}
+    const { data, error } = await supabase
+      .from('workspace_members')
+      .select('*')
+      .eq('workspace_id', workspaceId)
+
+    if (error) {
+      console.error('Error fetching members:', error)
+      return []
+    }
+    return data
+  },
+  ['workspace_members_raw'],
+  { revalidate: 30, tags: ['workspace_members_raw'] }
+)
+
+export const getInvites = unstable_cache(
+  async (workspaceId: string) => {
+    const supabase = await createAdminClient()
+    const { data } = await supabase
+      .from('workspace_invites')
+      .select('*')
+      .eq('workspace_id', workspaceId)
+      
+    return data || []
+  },
+  ['workspace_invites'],
+  { revalidate: 30, tags: ['workspace_invites'] }
+)
 
 export async function createInvite(workspaceId: string, email: string, role: string) {
   const supabase = await createClient()
@@ -38,7 +47,7 @@ export async function createInvite(workspaceId: string, email: string, role: str
   const expiresAt = new Date()
   expiresAt.setDate(expiresAt.getDate() + 7)
   
-  const { data, error } = await supabase
+  const { error } = await supabase
     .from('workspace_invites')
     .insert([{
       workspace_id: workspaceId,
@@ -56,24 +65,29 @@ export async function createInvite(workspaceId: string, email: string, role: str
 
   // In production, send email here.
   revalidatePath('/dashboard', 'layout')
+  revalidateTag('workspace_invites', 'max')
   return { success: true, token }
 }
 
-export async function getInvite(token: string) {
-  const supabase = await createClient()
-  // Since workspaces table has an RLS policy checking workspace_members,
-  // an unauthenticated user or non-member CANNOT read the workspace name.
-  // Wait! A user accepting an invite isn't a member yet, so they can't read `workspaces` table!
-  // To fix this, we can just get the invite.
-  const { data, error } = await supabase
-    .from('workspace_invites')
-    .select('*')
-    .eq('token', token)
-    .single()
+export const getInvite = unstable_cache(
+  async (token: string) => {
+    const supabase = await createAdminClient()
+    // Since workspaces table has an RLS policy checking workspace_members,
+    // an unauthenticated user or non-member CANNOT read the workspace name.
+    // Wait! A user accepting an invite isn't a member yet, so they can't read `workspaces` table!
+    // To fix this, we can just get the invite.
+    const { data, error } = await supabase
+      .from('workspace_invites')
+      .select('*')
+      .eq('token', token)
+      .single()
 
-  if (error) return null
-  return data
-}
+    if (error) return null
+    return data
+  },
+  ['invite_by_token'],
+  { revalidate: 30, tags: ['workspace_invites'] }
+)
 
 export async function acceptInvite(token: string) {
   const supabase = await createClient()
@@ -119,6 +133,9 @@ export async function acceptInvite(token: string) {
     .eq('token', token)
 
   revalidatePath('/dashboard', 'layout')
+  revalidateTag('workspace_invites', 'max')
+  revalidateTag('workspace_members_raw', 'max')
+  revalidateTag('workspace_members', 'max')
   return { success: true, workspaceId: invite.workspace_id }
 }
 
@@ -131,6 +148,8 @@ export async function updateMemberRole(workspaceId: string, userId: string, role
 
   if (error) return { error: error.message }
   revalidatePath('/dashboard', 'layout')
+  revalidateTag('workspace_members_raw', 'max')
+  revalidateTag('workspace_members', 'max')
   return { success: true }
 }
 
@@ -143,5 +162,7 @@ export async function removeMember(workspaceId: string, userId: string) {
 
   if (error) return { error: error.message }
   revalidatePath('/dashboard', 'layout')
+  revalidateTag('workspace_members_raw', 'max')
+  revalidateTag('workspace_members', 'max')
   return { success: true }
 }

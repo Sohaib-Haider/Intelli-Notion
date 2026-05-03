@@ -5,6 +5,19 @@ import { getMembers, getInvites, createInvite, removeMember, updateMemberRole } 
 import { deleteWorkspace } from '@/lib/actions/workspace'
 import { deleteAccount } from '@/app/login/actions'
 import { useRouter } from 'next/navigation'
+import { useQuery, keepPreviousData, useQueryClient } from '@tanstack/react-query'
+import { Skeleton } from '@/components/ui/skeleton'
+
+function SettingsSkeleton({ rows = 3 }: { rows?: number }) {
+  return (
+    <div className="space-y-2">
+      {Array.from({ length: rows }).map((_, i) => (
+        <Skeleton key={i} className="h-10 w-full rounded-md" />
+      ))}
+    </div>
+  )
+}
+
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import {
@@ -22,17 +35,27 @@ import {
   TableHeader,
   TableRow,
 } from '@/components/ui/table'
-import { Settings, Users, Link as LinkIcon, Loader2, AlertTriangle, ShieldAlert } from 'lucide-react'
+import { Users, Link as LinkIcon, Loader2, ShieldAlert } from 'lucide-react'
 import { Avatar, AvatarFallback } from '@/components/ui/avatar'
 import { Badge } from '@/components/ui/badge'
-import { cn } from '@/lib/utils'
 
 export default function WorkspaceSettingsPage({ params }: { params: Promise<{ workspaceId: string }> }) {
   const unwrappedParams = React.use(params)
   const workspaceId = unwrappedParams.workspaceId
 
-  const [members, setMembers] = React.useState<any[]>([])
-  const [invites, setInvites] = React.useState<any[]>([])
+interface Member {
+  user_id: string
+  role: string
+  joined_at: string
+}
+
+interface Invite {
+  id: string
+  email: string
+  role: string
+  expires_at: string
+}
+
   const [email, setEmail] = React.useState('')
   const [role, setRole] = React.useState('editor')
   const [isInviting, setIsInviting] = React.useState(false)
@@ -40,14 +63,26 @@ export default function WorkspaceSettingsPage({ params }: { params: Promise<{ wo
   const router = useRouter()
   const [isDeleting, setIsDeleting] = React.useState(false)
 
-  React.useEffect(() => {
-    loadData()
-  }, [workspaceId])
+  const queryClient = useQueryClient()
 
-  async function loadData() {
-    setMembers(await getMembers(workspaceId))
-    setInvites(await getInvites(workspaceId))
-  }
+  const { data: membersData, isLoading: isLoadingMembers } = useQuery({
+    queryKey: ['members', workspaceId],
+    queryFn: () => getMembers(workspaceId),
+    staleTime: 60_000,
+    gcTime: 300_000,
+    placeholderData: keepPreviousData,
+  })
+
+  const { data: invitesData, isLoading: isLoadingInvites } = useQuery({
+    queryKey: ['invites', workspaceId],
+    queryFn: () => getInvites(workspaceId),
+    staleTime: 60_000,
+    gcTime: 300_000,
+    placeholderData: keepPreviousData,
+  })
+
+  const members = membersData || []
+  const invites = invitesData || []
 
   async function handleInvite(e: React.FormEvent) {
     e.preventDefault()
@@ -57,7 +92,7 @@ export default function WorkspaceSettingsPage({ params }: { params: Promise<{ wo
       const link = `${window.location.origin}/invite/${res.token}`
       setGeneratedLink(link)
       setEmail('')
-      loadData()
+      queryClient.invalidateQueries({ queryKey: ['invites', workspaceId] })
     } else {
       alert(res.error)
     }
@@ -65,14 +100,20 @@ export default function WorkspaceSettingsPage({ params }: { params: Promise<{ wo
   }
 
   async function handleRoleChange(userId: string, newRole: string) {
-    await updateMemberRole(workspaceId, userId, newRole)
-    loadData()
+    queryClient.setQueryData(['members', workspaceId], (old: Member[]) => 
+      old?.map(m => m.user_id === userId ? { ...m, role: newRole } : m)
+    )
+    const res = await updateMemberRole(workspaceId, userId, newRole)
+    if (res?.error) queryClient.invalidateQueries({ queryKey: ['members', workspaceId] })
   }
 
   async function handleRemove(userId: string) {
     if (confirm('Are you sure you want to remove this member?')) {
-      await removeMember(workspaceId, userId)
-      loadData()
+      queryClient.setQueryData(['members', workspaceId], (old: Member[]) => 
+        old?.filter(m => m.user_id !== userId)
+      )
+      const res = await removeMember(workspaceId, userId)
+      if (res?.error) queryClient.invalidateQueries({ queryKey: ['members', workspaceId] })
     }
   }
 
@@ -144,7 +185,7 @@ export default function WorkspaceSettingsPage({ params }: { params: Promise<{ wo
                   </div>
                   <div className="space-y-2">
                     <label className="text-xs font-bold uppercase tracking-wider text-muted-foreground ml-1">Role</label>
-                    <Select value={role} onValueChange={setRole}>
+                    <Select value={role} onValueChange={(val) => setRole(val || 'editor')}>
                       <SelectTrigger className="bg-background border-border rounded-xl h-11 text-foreground">
                         <SelectValue />
                       </SelectTrigger>
@@ -206,7 +247,14 @@ export default function WorkspaceSettingsPage({ params }: { params: Promise<{ wo
                     </TableRow>
                   </TableHeader>
                   <TableBody>
-                    {members.map(m => (
+                    {(isLoadingMembers) && !membersData ? (
+                      <TableRow className="hover:bg-transparent">
+                        <TableCell colSpan={4}>
+                          <SettingsSkeleton rows={3} />
+                        </TableCell>
+                      </TableRow>
+                    ) : (
+                    members.map(m => (
                       <TableRow key={m.user_id} className="border-border hover:bg-muted/30 group">
                         <TableCell className="pl-8 py-4">
                           <div className="flex items-center gap-3">
@@ -219,7 +267,7 @@ export default function WorkspaceSettingsPage({ params }: { params: Promise<{ wo
                           </div>
                         </TableCell>
                         <TableCell>
-                          <Select value={m.role} onValueChange={(r) => handleRoleChange(m.user_id, r)}>
+                          <Select value={m.role} onValueChange={(r) => handleRoleChange(m.user_id, r || 'reader')}>
                             <SelectTrigger className="w-[110px] h-9 bg-background border-border rounded-lg text-sm font-semibold">
                               <SelectValue />
                             </SelectTrigger>
@@ -244,7 +292,8 @@ export default function WorkspaceSettingsPage({ params }: { params: Promise<{ wo
                           </Button>
                         </TableCell>
                       </TableRow>
-                    ))}
+                    ))
+                    )}
                   </TableBody>
                 </Table>
               </div>
@@ -258,7 +307,10 @@ export default function WorkspaceSettingsPage({ params }: { params: Promise<{ wo
               <section className="bg-card border border-border rounded-2xl p-6 shadow-sm">
                 <h3 className="text-sm font-bold uppercase tracking-widest text-muted-foreground mb-4">Pending Invites</h3>
                 <div className="space-y-3">
-                  {invites.map(inv => (
+                  {(isLoadingInvites) && !invitesData ? (
+                    <SettingsSkeleton rows={2} />
+                  ) : (
+                  invites.map(inv => (
                     <div key={inv.id} className="flex flex-col p-4 bg-muted/20 border border-border rounded-xl">
                       <div className="flex items-center justify-between mb-1">
                         <span className="font-bold text-sm text-foreground truncate">{inv.email}</span>
@@ -266,7 +318,8 @@ export default function WorkspaceSettingsPage({ params }: { params: Promise<{ wo
                       </div>
                       <span className="text-[10px] font-bold text-muted-foreground uppercase tracking-wider">Expires {new Date(inv.expires_at).toLocaleDateString()}</span>
                     </div>
-                  ))}
+                  ))
+                  )}
                 </div>
               </section>
             )}

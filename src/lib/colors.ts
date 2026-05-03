@@ -1,13 +1,14 @@
 export const MEMBER_COLORS = [
-  '#2DB89A', // Emerald Teal
-  '#E85D75', // Rose Pink
-  '#8B5CF6', // Vivid Purple
   '#4F6EF7', // Royal Blue
-  '#EF9F27', // Amber Orange
-  '#F43F5E', // Rose Red
+  '#A855F7', // Vivid Purple
+  '#F97316', // Bright Orange
+  '#10B981', // Emerald Green
+  '#EC4899', // Pink
   '#06B6D4', // Cyan
+  '#F43F5E', // Rose Red
+  '#8B5CF6', // Soft Purple
   '#F59E0B', // Amber
-  '#10B981', // Emerald
+  '#14B8A6', // Teal
 ]
 
 /**

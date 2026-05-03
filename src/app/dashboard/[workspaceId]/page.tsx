@@ -23,7 +23,7 @@ export default async function WorkspacePage({ params }: PageProps) {
         </div>
         <h2 className="text-2xl font-bold tracking-tight">Welcome to your workspace</h2>
         <p className="text-sm text-zinc-400">
-          Select a feature from the sidebar or click "Add Feature" to get started.
+          Select a feature from the sidebar or click &quot;Add Feature&quot; to get started.
         </p>
       </div>
     </div>

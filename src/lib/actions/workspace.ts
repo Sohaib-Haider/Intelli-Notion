@@ -1,21 +1,26 @@
 'use server'
 
 import { createClient } from '@/utils/supabase/server'
-import { revalidatePath } from 'next/cache'
+import { createAdminClient } from '@/utils/supabase/admin'
+import { revalidatePath, revalidateTag, unstable_cache } from 'next/cache'
 
-export async function getWorkspaces() {
-  const supabase = await createClient()
-  const { data, error } = await supabase
-    .from('workspaces')
-    .select('*')
-    .order('created_at', { ascending: false })
+export const getWorkspaces = unstable_cache(
+  async () => {
+    const supabase = await createAdminClient()
+    const { data, error } = await supabase
+      .from('workspaces')
+      .select('*')
+      .order('created_at', { ascending: false })
 
-  if (error) {
-    console.error('Error fetching workspaces:', error.message || JSON.stringify(error))
-    return []
-  }
-  return data
-}
+    if (error) {
+      console.error('Error fetching workspaces:', error.message || JSON.stringify(error))
+      return []
+    }
+    return data
+  },
+  ['workspaces'],
+  { revalidate: 30, tags: ['workspaces'] }
+)
 
 export async function createWorkspace(formData: FormData) {
   const name = formData.get('name') as string
@@ -35,23 +40,28 @@ export async function createWorkspace(formData: FormData) {
 
   console.log("RPC Success, new workspace:", workspace)
   revalidatePath('/dashboard', 'layout')
+  revalidateTag('workspaces', 'max')
   return { success: true, workspace }
 }
 
-export async function getWorkspaceFeatures(workspaceId: string) {
-  const supabase = await createClient()
-  const { data, error } = await supabase
-    .from('workspace_features')
-    .select('*')
-    .eq('workspace_id', workspaceId)
-    .order('created_at', { ascending: true })
+export const getWorkspaceFeatures = unstable_cache(
+  async (workspaceId: string) => {
+    const supabase = await createAdminClient()
+    const { data, error } = await supabase
+      .from('workspace_features')
+      .select('*')
+      .eq('workspace_id', workspaceId)
+      .order('created_at', { ascending: true })
 
-  if (error) {
-    console.error('Error fetching features:', error)
-    return []
-  }
-  return data
-}
+    if (error) {
+      console.error('Error fetching features:', error)
+      return []
+    }
+    return data
+  },
+  ['workspace_features'],
+  { revalidate: 30, tags: ['workspace_features'] }
+)
 
 export async function createFeature(workspaceId: string, type: string, title: string) {
   const supabase = await createClient()
@@ -67,6 +77,7 @@ export async function createFeature(workspaceId: string, type: string, title: st
   }
 
   revalidatePath('/dashboard', 'layout')
+  revalidateTag('workspace_features', 'max')
   return { success: true, feature }
 }
 
@@ -82,6 +93,7 @@ export async function deleteWorkspace(workspaceId: string) {
   }
 
   revalidatePath('/dashboard', 'layout')
+  revalidateTag('workspaces', 'max')
   return { success: true }
 }
 
@@ -97,6 +109,7 @@ export async function deleteFeature(featureId: string) {
   }
 
   revalidatePath('/dashboard', 'layout')
+  revalidateTag('workspace_features', 'max')
   return { success: true }
 }
 

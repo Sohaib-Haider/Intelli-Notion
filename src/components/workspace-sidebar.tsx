@@ -2,8 +2,8 @@
 
 import * as React from "react"
 import Link from "next/link"
-import { useParams, useRouter } from "next/navigation"
-import { Check, ChevronsUpDown, Plus, SquareTerminal, Loader2, LogOut, Settings, Trash2, Sun, Moon, BarChart3, ChevronRight } from "lucide-react"
+import { useParams, useRouter, usePathname } from "next/navigation"
+import { Check, ChevronsUpDown, Plus, SquareTerminal, Loader2, LogOut, Settings, Trash2, Sun, Moon, BarChart3, ChevronRight, Calendar } from "lucide-react"
 import { useTheme } from "@/components/theme-provider"
 import { cn } from "@/lib/utils"
 import {
@@ -41,37 +41,68 @@ import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { createWorkspace, createFeature, getWorkspaceFeatures, deleteFeature } from "@/lib/actions/workspace"
 import { logout } from "@/app/dashboard/actions"
+import { useQueryClient } from "@tanstack/react-query"
+import { getTasks, getWorkspaceMembers } from "@/lib/actions/tasks"
+import { getOutreachLogs } from "@/lib/actions/outreach"
+
+interface Workspace {
+  id: string
+  name: string
+}
+
+interface User {
+  id: string
+  email?: string
+  user_metadata?: {
+    full_name?: string
+  }
+}
+
+interface Feature {
+  id: string
+  title: string
+  type: 'TASK_TRACKER' | 'OUTREACH_LOG'
+}
 
 export function WorkspaceSidebar({ 
   workspaces, 
   user 
 }: { 
-  workspaces: any[], 
-  user: any 
+  workspaces: Workspace[], 
+  user: User 
 }) {
   const params = useParams()
   const router = useRouter()
+  const pathname = usePathname()
+  const queryClient = useQueryClient()
   
   const workspaceId = params.workspaceId as string
   const activeWorkspace = workspaces.find(w => w.id === workspaceId) || workspaces[0]
 
-  const [features, setFeatures] = React.useState<any[]>([])
+  const [features, setFeatures] = React.useState<Feature[]>([])
   const [isWorkspaceModalOpen, setIsWorkspaceModalOpen] = React.useState(false)
   const [isFeatureModalOpen, setIsFeatureModalOpen] = React.useState(false)
   const [isLoading, setIsLoading] = React.useState(false)
-  const [mounted, setMounted] = React.useState(false)
   const { theme, setTheme } = useTheme()
+  const [mounted, setMounted] = React.useState(false)
 
   React.useEffect(() => {
     setMounted(true)
   }, [])
 
+
   React.useEffect(() => {
-    if (activeWorkspace) {
-      getWorkspaceFeatures(activeWorkspace.id).then(setFeatures)
-    } else {
-      setFeatures([])
+    let active = true
+    const loadFeatures = async () => {
+      if (activeWorkspace) {
+        const data = await getWorkspaceFeatures(activeWorkspace.id)
+        if (active) setFeatures(data || [])
+      } else {
+        if (active) setFeatures([])
+      }
     }
+    loadFeatures()
+    return () => { active = false }
   }, [activeWorkspace])
 
   async function handleCreateWorkspace(formData: FormData) {
@@ -85,8 +116,9 @@ export function WorkspaceSidebar({
       } else {
         alert("Error: " + (result.error || "Failed to create workspace"))
       }
-    } catch (error: any) {
-      alert("System Error: " + error.message)
+    } catch (error: unknown) {
+      const message = error instanceof Error ? error.message : "Unknown error"
+      alert("System Error: " + message)
     } finally {
       setIsLoading(false)
     }
@@ -157,29 +189,30 @@ export function WorkspaceSidebar({
         </DialogContent>
       </Dialog>
 
-      <SidebarHeader className="bg-card dark:bg-[#0D0E12] rounded-t-[32px] border-b border-border pb-2 px-3 group-data-[collapsible=icon]:px-0 group-data-[collapsible=icon]:items-center">
+      <SidebarHeader className="bg-background rounded-t-[32px] border-b border-zinc-200 dark:border-white/5 pb-2 px-3 group-data-[collapsible=icon]:px-0 group-data-[collapsible=icon]:items-center">
         <SidebarMenu>
           <SidebarMenuItem>
             <DropdownMenu>
               <DropdownMenuTrigger
-                render={
+                render={(props) => (
                   <SidebarMenuButton
+                    {...props}
                     size="lg"
                     className="data-[state=open]:bg-accent rounded-xl hover:bg-accent transition-colors group-data-[collapsible=icon]:justify-center group-data-[collapsible=icon]:px-0"
-                  />
-                }
-              >
-                <div className="flex aspect-square size-9 items-center justify-center rounded-full bg-primary text-primary-foreground shadow-lg shadow-primary/20 shrink-0">
-                  <SquareTerminal className="size-5" />
-                </div>
-                <div className="grid flex-1 text-left text-sm leading-tight group-data-[collapsible=icon]:hidden">
-                  <span className="truncate font-bold tracking-tight text-foreground">
-                    {activeWorkspace?.name || "Select Workspace"}
-                  </span>
-                  <span className="truncate text-[10px] font-semibold text-muted-foreground uppercase tracking-wider">Free Plan</span>
-                </div>
-                <ChevronsUpDown className="ml-auto size-4 text-muted-foreground group-data-[collapsible=icon]:hidden" />
-              </DropdownMenuTrigger>
+                  >
+                    <div className="flex aspect-square size-9 items-center justify-center rounded-full bg-primary text-primary-foreground shadow-lg shadow-primary/20 shrink-0">
+                      <SquareTerminal className="size-5" />
+                    </div>
+                    <div className="grid flex-1 text-left text-sm leading-tight group-data-[collapsible=icon]:hidden">
+                      <span className="truncate font-bold tracking-tight text-[14px] text-foreground">
+                        {activeWorkspace?.name || "Select Workspace"}
+                      </span>
+                      <span className="truncate text-[10px] font-bold text-zinc-500 dark:text-zinc-400 uppercase tracking-widest leading-none">Free Plan</span>
+                    </div>
+                    <ChevronsUpDown className="ml-auto size-4 text-muted-foreground group-data-[collapsible=icon]:hidden" />
+                  </SidebarMenuButton>
+                )}
+              />
               <DropdownMenuContent
                 className="w-[--radix-dropdown-menu-trigger-width] min-w-56 rounded-xl bg-card border border-border text-card-foreground p-2 shadow-lg"
                 align="start"
@@ -187,7 +220,7 @@ export function WorkspaceSidebar({
                 sideOffset={4}
               >
                 <DropdownMenuGroup>
-                  <DropdownMenuLabel className="text-xs text-muted-foreground font-semibold uppercase tracking-wider px-2 py-1.5">Workspaces</DropdownMenuLabel>
+                  <DropdownMenuLabel className="text-[10px] text-zinc-500 dark:text-zinc-400 font-bold uppercase tracking-widest px-2 py-1.5 leading-none">Workspaces</DropdownMenuLabel>
                 </DropdownMenuGroup>
                 {workspaces.map((workspace) => (
                   <DropdownMenuItem
@@ -218,7 +251,7 @@ export function WorkspaceSidebar({
         </SidebarMenu>
       </SidebarHeader>
 
-      <SidebarContent className="bg-card dark:bg-[#0D0E12] group-data-[collapsible=icon]:px-0 px-0">
+      <SidebarContent className="bg-background group-data-[collapsible=icon]:px-0 px-0">
         <div className="flex flex-col h-full">
         {workspaces.length === 0 && (
           <div className="px-4 py-8 text-center space-y-4">
@@ -227,7 +260,7 @@ export function WorkspaceSidebar({
             </div>
             <div className="space-y-1">
               <h3 className="text-sm font-semibold text-foreground">No workspaces</h3>
-              <p className="text-xs text-muted-foreground px-4">Create your first workspace to start collaborating.</p>
+              <p className="text-[13px] text-zinc-600 dark:text-white/70 px-4 leading-relaxed font-medium">Create your first workspace to start collaborating.</p>
             </div>
             <Button
               onClick={() => setIsWorkspaceModalOpen(true)}
@@ -242,22 +275,54 @@ export function WorkspaceSidebar({
         {activeWorkspace && (
           <>
             <SidebarMenu className="mt-2 px-3 space-y-2 group-data-[collapsible=icon]:px-0">
-            <div className="mb-1 px-2 text-[10px] font-bold uppercase tracking-[0.15em] text-muted-foreground group-data-[collapsible=icon]:hidden">
+            <div className="mb-2 px-3 text-[10px] font-bold uppercase tracking-[0.2em] text-zinc-500 dark:text-zinc-500 group-data-[collapsible=icon]:hidden">
               Features
             </div>
+            
+            <SidebarMenuItem>
+              <SidebarMenuButton
+                render={(props) => <Link {...props} href={`/dashboard/${activeWorkspace.id}/calendar`} prefetch={true} />}
+                isActive={pathname?.includes('/calendar') ?? false}
+                tooltip="Calendar"
+                className={cn(
+                  "group/menu-button flex h-12 items-center gap-3 rounded-xl px-2 transition-all duration-200 font-medium text-sm group-data-[collapsible=icon]:justify-center group-data-[collapsible=icon]:px-0 group-data-[collapsible=icon]:h-12",
+                  pathname?.includes('/calendar')
+                    ? "bg-primary/10 dark:bg-primary/20 text-primary dark:text-white font-bold"
+                    : "text-muted-foreground hover:bg-accent hover:text-foreground"
+                )}
+              >
+                <div className={cn(
+                  "flex size-9 shrink-0 items-center justify-center rounded-full transition-all duration-300",
+                  pathname?.includes('/calendar')
+                    ? "bg-[#3B82F6] text-white shadow-lg shadow-[#3B82F6]/40" 
+                    : "bg-muted text-muted-foreground group-hover:bg-accent-foreground/10"
+                )}>
+                  <Calendar className="size-4.5" />
+                </div>
+                <span className="flex-1 group-data-[collapsible=icon]:hidden whitespace-nowrap overflow-hidden font-bold tracking-tight text-sm">Calendar</span>
+              </SidebarMenuButton>
+            </SidebarMenuItem>
+
             {features.map((feature) => {
               const isActive = params.featureId === feature.id
               return (
                 <SidebarMenuItem key={feature.id}>
                   <SidebarMenuButton
-                    render={<Link href={`/dashboard/${activeWorkspace.id}/${feature.id}`} />}
+                    render={(props) => <Link {...props} href={`/dashboard/${activeWorkspace.id}/${feature.id}`} prefetch={true} onMouseEnter={() => {
+                      if (feature.type === 'TASK_TRACKER') {
+                        queryClient.prefetchQuery({ queryKey: ['tasks', feature.id], queryFn: () => getTasks(feature.id), staleTime: 30_000 })
+                      } else if (feature.type === 'OUTREACH_LOG') {
+                        queryClient.prefetchQuery({ queryKey: ['outreach_logs', feature.id], queryFn: () => getOutreachLogs(feature.id), staleTime: 30_000 })
+                      }
+                      queryClient.prefetchQuery({ queryKey: ['members', activeWorkspace.id], queryFn: () => getWorkspaceMembers(activeWorkspace.id), staleTime: 30_000 })
+                    }} />}
                     isActive={isActive}
                     tooltip={feature.title}
                     className={cn(
                       "group/menu-button flex h-12 items-center gap-3 rounded-xl px-2 transition-all duration-200 font-medium text-sm group-data-[collapsible=icon]:justify-center group-data-[collapsible=icon]:px-0 group-data-[collapsible=icon]:h-12",
                       isActive
-                        ? "bg-primary/10 text-primary font-semibold"
-                        : "text-foreground hover:bg-accent hover:text-foreground"
+                        ? "bg-primary/10 dark:bg-primary/20 text-primary dark:text-white font-bold"
+                        : "text-muted-foreground hover:bg-accent hover:text-foreground"
                     )}
                   >
                     <div className={cn(
@@ -287,16 +352,17 @@ export function WorkspaceSidebar({
             {/* Add Feature */}
             <SidebarMenuItem className="mt-1">
               <Dialog open={isFeatureModalOpen} onOpenChange={setIsFeatureModalOpen}>
-                <DialogTrigger render={
+                <DialogTrigger render={(props) => (
                   <SidebarMenuButton 
-                    className="h-12 rounded-xl hover:bg-accent text-muted-foreground hover:text-primary transition-all text-sm font-medium group-data-[collapsible=icon]:justify-center group-data-[collapsible=icon]:px-0" 
-                  >
-                    <div className="flex size-9 shrink-0 items-center justify-center rounded-full bg-muted/50 text-muted-foreground group-hover:bg-primary/10 group-hover:text-primary transition-all">
-                      <Plus className="size-4.5" />
-                    </div>
-                    <span className="group-data-[collapsible=icon]:hidden ml-3 font-bold tracking-tight">Add Feature</span>
-                  </SidebarMenuButton>
-                }>
+                    className="h-10 rounded-xl bg-zinc-100 dark:bg-white/5 border border-zinc-200 dark:border-white/5 hover:bg-zinc-200 dark:hover:bg-white/10 hover:border-zinc-300 dark:hover:border-white/10 transition-all font-bold text-sm text-foreground"
+                    render={(props) => (
+                      <button {...props}>
+                        <Plus className="size-4 text-primary" />
+                        <span className="group-data-[collapsible=icon]:hidden">Add Feature</span>
+                      </button>
+                    )}
+                  />
+                )}>
                 </DialogTrigger>
                 <DialogContent className="sm:max-w-[440px] bg-card border border-border text-card-foreground rounded-2xl shadow-xl p-0 overflow-hidden">
                   <div className="bg-primary/5 border-b border-border px-6 py-5">
@@ -314,8 +380,8 @@ export function WorkspaceSidebar({
                         <Check className="h-5 w-5" />
                       </div>
                       <div>
-                        <h4 className="font-semibold text-foreground">Task Tracker</h4>
-                        <p className="text-xs text-muted-foreground mt-0.5">Stay organized with tasks, your way.</p>
+                        <h4 className="font-bold text-[13.5px] text-foreground tracking-tight">Task Tracker</h4>
+                        <p className="text-[11.5px] text-zinc-500 dark:text-zinc-500 mt-0.5 leading-normal">Stay organized with tasks, your way.</p>
                       </div>
                     </button>
 
@@ -327,8 +393,8 @@ export function WorkspaceSidebar({
                         <BarChart3 className="h-5 w-5" />
                       </div>
                       <div>
-                        <h4 className="font-semibold text-foreground">Outreach Log</h4>
-                        <p className="text-xs text-muted-foreground mt-0.5">Track and analyze your outreach efforts.</p>
+                        <h4 className="font-bold text-[13.5px] text-foreground tracking-tight">Outreach Log</h4>
+                        <p className="text-[11.5px] text-zinc-500 dark:text-zinc-500 mt-0.5 leading-normal">Track and analyze your outreach efforts.</p>
                       </div>
                     </button>
                   </div>
@@ -340,15 +406,15 @@ export function WorkspaceSidebar({
           <SidebarMenu className="mt-auto px-3 space-y-2 group-data-[collapsible=icon]:px-0">
             <SidebarMenuItem>
               <SidebarMenuButton
-                render={
-                  <Link href={`/dashboard/${activeWorkspace.id}/settings`} className="flex items-center w-full">
+                render={(props) => (
+                  <Link {...props} href={`/dashboard/${activeWorkspace.id}/settings`} prefetch={true} className="flex items-center w-full">
                      <div className="flex size-9 shrink-0 items-center justify-center rounded-full bg-muted/50 text-muted-foreground group-hover:bg-accent transition-all">
                       <Settings className="size-4.5" />
                     </div>
                     <span className="group-data-[collapsible=icon]:hidden ml-3 font-bold tracking-tight">Settings</span>
                     <ChevronRight className="ml-auto size-3.5 text-muted-foreground group-data-[collapsible=icon]:hidden" />
                   </Link>
-                }
+                )}
                 className="h-12 rounded-xl text-muted-foreground hover:bg-accent hover:text-foreground transition-colors font-medium text-sm group-data-[collapsible=icon]:px-0 group-data-[collapsible=icon]:justify-center"
               />
             </SidebarMenuItem>
@@ -358,12 +424,13 @@ export function WorkspaceSidebar({
         </div>
       </SidebarContent>
 
-      <SidebarFooter className="bg-card dark:bg-[#0D0E12] rounded-b-[32px] border-t border-border pt-2 px-3 group-data-[collapsible=icon]:px-0">
+      <SidebarFooter className="bg-background rounded-b-[32px] border-t border-zinc-200 dark:border-white/5 pt-2 px-3 group-data-[collapsible=icon]:px-0">
         <SidebarMenu>
           <SidebarMenuItem>
             <DropdownMenu>
-              <DropdownMenuTrigger render={
+              <DropdownMenuTrigger render={(props) => (
                 <SidebarMenuButton
+                  {...props}
                   size="lg"
                   className="rounded-xl data-[state=open]:bg-accent hover:bg-accent transition-colors group-data-[collapsible=icon]:justify-center group-data-[collapsible=icon]:px-0"
                 >
@@ -382,7 +449,7 @@ export function WorkspaceSidebar({
                   </div>
                   <ChevronsUpDown className="ml-auto size-4 text-muted-foreground group-data-[collapsible=icon]:hidden" />
                 </SidebarMenuButton>
-              } />
+              )} />
               <DropdownMenuContent
                 className="w-[--radix-dropdown-menu-trigger-width] min-w-56 rounded-xl bg-card border border-border text-card-foreground shadow-lg"
                 side="bottom"
@@ -401,8 +468,8 @@ export function WorkspaceSidebar({
                         </AvatarFallback>
                       </Avatar>
                       <div className="grid flex-1 text-left text-sm leading-tight">
-                        <span className="truncate font-semibold text-foreground">{user?.user_metadata?.full_name || user?.email}</span>
-                        <span className="truncate text-xs text-muted-foreground">{user?.email}</span>
+                        <span className="truncate font-bold text-[13px] text-foreground tracking-tight">{user?.user_metadata?.full_name || user?.email}</span>
+                        <span className="truncate text-[10px] font-medium text-zinc-500 dark:text-zinc-500">{user?.email}</span>
                       </div>
                     </div>
                   </DropdownMenuLabel>

@@ -2,7 +2,7 @@
 
 import * as React from 'react'
 import { format, startOfWeek, endOfWeek, isWithinInterval, subWeeks } from 'date-fns'
-import { Plus, BarChart3, TrendingUp, TrendingDown, MoreHorizontal, Send, Mail, Link2, Camera, Phone, MessageSquare } from 'lucide-react'
+import { Plus, BarChart3, Mail, Link2, Camera, Phone, MessageSquare } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import {
@@ -21,36 +21,84 @@ import {
 } from '@/components/ui/select'
 import { Textarea } from '@/components/ui/textarea'
 import { Avatar, AvatarFallback } from '@/components/ui/avatar'
-import { Badge } from '@/components/ui/badge'
-import { getOutreachLogs, createOutreachLog, deleteOutreachLog } from '@/lib/actions/outreach'
+import { getOutreachLogs, createOutreachLog, deleteOutreachLog, updateOutreachStatus } from '@/lib/actions/outreach'
 import { getWorkspaceMembers } from '@/lib/actions/tasks'
 import { cn } from '@/lib/utils'
 import { getMemberColor } from '@/lib/colors'
+import { useQuery, keepPreviousData, useQueryClient } from '@tanstack/react-query'
+import { Skeleton } from '@/components/ui/skeleton'
 
+function LogSkeleton({ rows = 5 }: { rows?: number }) {
+  return (
+    <div className="space-y-6">
+      {Array.from({ length: rows }).map((_, i) => (
+        <Skeleton key={i} className="h-32 w-full rounded-[32px]" />
+      ))}
+    </div>
+  )
+}
+interface OutreachLogRecord {
+  id: string
+  created_at: string
+  channel: string
+  count: number
+  note?: string
+  member_id: string
+  outreach_type?: 'Manual' | 'Campaign'
+  campaign_status?: 'Live' | 'Completed'
+  profiles?: {
+    full_name?: string
+  }
+}
 
+interface Member {
+  user_id: string
+  profiles?: {
+    full_name?: string
+  }
+}
 
-export function OutreachLog({ workspaceId, featureId, currentUser }: { workspaceId: string, featureId: string, currentUser: any }) {
-  const [logs, setLogs] = React.useState<any[]>([])
-  const [members, setMembers] = React.useState<any[]>([])
+export function OutreachLog({ workspaceId, featureId, currentUser }: { workspaceId: string, featureId: string, currentUser: { id: string } }) {
+  const queryClient = useQueryClient()
+
+  const { data: logsData, isLoading: isLoadingLogs } = useQuery({
+    queryKey: ['outreach_logs', featureId],
+    queryFn: () => getOutreachLogs(featureId),
+    staleTime: 60_000,
+    gcTime: 300_000,
+    placeholderData: keepPreviousData,
+  })
+
+  const { data: membersData, isLoading: isLoadingMembers } = useQuery({
+    queryKey: ['members', workspaceId],
+    queryFn: () => getWorkspaceMembers(workspaceId),
+    staleTime: 60_000,
+    gcTime: 300_000,
+    placeholderData: keepPreviousData,
+  })
+
+  const logs = logsData || []
+  const members = membersData || []
   const [isLogModalOpen, setIsLogModalOpen] = React.useState(false)
   
   const [channel, setChannel] = React.useState('Cold email')
   const [count, setCount] = React.useState('0')
   const [note, setNote] = React.useState('')
+  const [outreachType, setOutreachType] = React.useState<'Manual' | 'Campaign'>('Manual')
+  const [campaignStatus, setCampaignStatus] = React.useState<'Live' | 'Completed'>('Live')
   const [isSubmitting, setIsSubmitting] = React.useState(false)
+  const [isDark, setIsDark] = React.useState(true)
 
   React.useEffect(() => {
-    loadData()
-  }, [workspaceId, featureId])
+    setIsDark(document.documentElement.classList.contains('dark'))
+    const observer = new MutationObserver(() => {
+      setIsDark(document.documentElement.classList.contains('dark'))
+    })
+    observer.observe(document.documentElement, { attributes: true, attributeFilter: ['class'] })
+    return () => observer.disconnect()
+  }, [])
 
-  async function loadData() {
-    const [fetchedLogs, fetchedMembers] = await Promise.all([
-      getOutreachLogs(featureId),
-      getWorkspaceMembers(workspaceId)
-    ])
-    setLogs(fetchedLogs || [])
-    setMembers(fetchedMembers || [])
-  }
+
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault()
@@ -58,14 +106,16 @@ export function OutreachLog({ workspaceId, featureId, currentUser }: { workspace
     const result = await createOutreachLog(workspaceId, featureId, {
       channel,
       count: parseInt(count),
-      note
+      note,
+      outreach_type: outreachType,
+      campaign_status: outreachType === 'Campaign' ? campaignStatus : undefined
     })
     
     if (result.success) {
       setIsLogModalOpen(false)
       setCount('0')
       setNote('')
-      loadData()
+      queryClient.invalidateQueries({ queryKey: ['outreach_logs', featureId] })
     } else {
       alert("Error: " + result.error)
     }
@@ -74,13 +124,18 @@ export function OutreachLog({ workspaceId, featureId, currentUser }: { workspace
 
 
 
-  const getChannelIcon = (channel: string) => {
+  const getChannelStyle = (channel: string) => {
     switch (channel) {
-      case 'Cold email': return <Mail className="h-4 w-4" />
-      case 'LinkedIn campaign': return <Link2 className="h-4 w-4" />
-      case 'Instagram DM': return <Camera className="h-4 w-4" />
-      case 'Phone calls': return <Phone className="h-4 w-4" />
-      default: return <MessageSquare className="h-4 w-4" />
+      case 'Cold email': 
+        return { icon: <Mail className="h-4 w-4" />, className: "bg-[#06B6D4] text-white border-transparent" }
+      case 'LinkedIn campaign': 
+        return { icon: <Link2 className="h-4 w-4" />, className: "bg-[#4F6EF7] text-white border-transparent" }
+      case 'Instagram DM': 
+        return { icon: <Camera className="h-4 w-4" />, className: "bg-[#EC4899] text-white border-transparent" }
+      case 'Phone calls': 
+        return { icon: <Phone className="h-4 w-4" />, className: "bg-[#10B981] text-white border-transparent" }
+      default: 
+        return { icon: <MessageSquare className="h-4 w-4" />, className: "bg-[#F97316] text-white border-transparent" }
     }
   }
 
@@ -102,71 +157,141 @@ export function OutreachLog({ workspaceId, featureId, currentUser }: { workspace
     <div className="flex flex-col bg-background text-foreground transition-all duration-500">
       <div className="flex items-center justify-between mb-10">
         <div>
-          <h1 className="text-4xl font-black text-foreground tracking-tight">Dashboard</h1>
-          <div className="flex items-center gap-2 mt-2">
-            <div className="h-2 w-2 rounded-full bg-emerald-500 animate-pulse" />
-            <p className="text-zinc-500 dark:text-zinc-400 font-bold text-xs uppercase tracking-widest">Live: {format(now, 'MMM d, yyyy')}</p>
+          <h1 className="text-4xl font-black text-foreground tracking-tight leading-tight">Dashboard</h1>
+          <div className="flex items-center gap-2 mt-1">
+            <div className="h-1.5 w-1.5 rounded-full bg-emerald-500 animate-pulse" />
+            <p className="text-zinc-500 font-bold text-[10px] uppercase tracking-[0.2em]">Live Tracking Feed</p>
           </div>
         </div>
         <div className="flex gap-3">
           <Dialog open={isLogModalOpen} onOpenChange={setIsLogModalOpen}>
-            <DialogTrigger render={<Button className="bg-[#4F6EF7] hover:bg-[#4F6EF7]/90 text-white rounded-xl px-8 h-12 font-bold shadow-xl shadow-blue-500/30 transition-all active:scale-95" />}>
-              <Plus className="mr-2 h-5 w-5" /> Log Outreach
+            <DialogTrigger asChild>
+              <Button className="bg-[#4F6EF7] hover:bg-[#4F6EF7]/90 text-white rounded-xl px-8 h-12 font-bold shadow-xl shadow-blue-500/30 transition-all active:scale-95">
+                <Plus className="mr-2 h-5 w-5" /> Log Outreach
+              </Button>
             </DialogTrigger>
-            <DialogContent className="sm:max-w-[500px] bg-white/80 dark:bg-zinc-900/80 backdrop-blur-2xl border-zinc-200 dark:border-zinc-800 text-zinc-900 dark:text-zinc-100 p-0 overflow-hidden rounded-[32px] shadow-2xl">
-              <div className="bg-[#4F6EF7] p-10 text-white relative overflow-hidden">
-                <div className="absolute top-[-20%] right-[-10%] w-40 h-40 bg-white/20 rounded-full blur-3xl" />
-                <DialogHeader>
-                  <DialogTitle className="text-3xl font-black tracking-tight">Add Record</DialogTitle>
-                </DialogHeader>
+            <DialogContent className="sm:max-w-[540px] w-[95vw] bg-card dark:bg-[#0D0E12] border border-border text-card-foreground p-0 overflow-hidden rounded-[32px] shadow-2xl transition-all duration-500">
+              <div className="bg-linear-to-br from-[#4F6EF7] via-[#6366F1] to-[#8B5CF6] p-12 text-white relative overflow-hidden shrink-0">
+                <div className="absolute top-[-20%] right-[-10%] w-64 h-64 bg-white/10 rounded-full blur-3xl animate-pulse" />
+                <div className="absolute bottom-[-20%] left-[-10%] w-48 h-48 bg-blue-400/20 rounded-full blur-3xl" />
+                <div className="relative z-10">
+                  <div className="flex items-center gap-3 mb-4">
+                    <div className="h-10 w-10 rounded-xl bg-white/20 backdrop-blur-md flex items-center justify-center border border-white/20">
+                      <BarChart3 className="h-6 w-6 text-white" />
+                    </div>
+                    <span className="text-[11px] font-black uppercase tracking-[0.3em] opacity-70">New Activity</span>
+                  </div>
+                  <DialogHeader>
+                    <DialogTitle className="text-4xl font-black tracking-tighter leading-none">Log Outreach</DialogTitle>
+                    <p className="text-white/70 text-sm mt-3 font-medium max-w-[280px] leading-relaxed">Record your latest outreach efforts and campaign metrics here.</p>
+                  </DialogHeader>
+                </div>
               </div>
-              <form onSubmit={handleSubmit} className="p-10 space-y-8">
-                <div className="space-y-3">
-                  <label className="text-xs font-black uppercase tracking-[0.2em] text-zinc-400">Outreach Channel</label>
-                  <Select value={channel} onValueChange={setChannel}>
-                    <SelectTrigger className="h-14 border-zinc-100 dark:border-zinc-800 bg-zinc-50/50 dark:bg-zinc-950/50 rounded-[20px] focus:ring-2 focus:ring-[#4F6EF7]/20 transition-all">
-                      <SelectValue />
-                    </SelectTrigger>
-                    <SelectContent className="bg-white dark:bg-zinc-900 border-zinc-100 dark:border-zinc-800 rounded-[20px]">
-                      <SelectItem value="Cold email">Cold email</SelectItem>
-                      <SelectItem value="LinkedIn campaign">LinkedIn campaign</SelectItem>
-                      <SelectItem value="Instagram DM">Instagram DM</SelectItem>
-                      <SelectItem value="Phone calls">Phone calls</SelectItem>
-                      <SelectItem value="Other">Other</SelectItem>
-                    </SelectContent>
-                  </Select>
-                </div>
 
-                <div className="space-y-3">
-                  <label className="text-xs font-black uppercase tracking-[0.2em] text-zinc-400">Total Count</label>
-                  <Input 
-                    type="number" 
-                    value={count}
-                    onChange={e => setCount(e.target.value)}
-                    className="h-14 border-zinc-100 dark:border-zinc-800 bg-zinc-50/50 dark:bg-zinc-950/50 rounded-[20px] focus:ring-2 focus:ring-[#4F6EF7]/20 text-lg font-bold"
-                    required
-                  />
-                </div>
+              <div className="flex-1 overflow-y-auto p-12 no-scrollbar bg-background/50 backdrop-blur-xl">
+                <form onSubmit={handleSubmit} className="space-y-10">
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+                    <div className="space-y-4">
+                      <label className="text-[11px] font-black uppercase tracking-[0.2em] text-zinc-500 dark:text-zinc-400 ml-1">Channel</label>
+                      <Select value={channel} onValueChange={setChannel}>
+                        <SelectTrigger className="h-14 border-border bg-muted/30 rounded-[20px] focus:ring-4 focus:ring-primary/10 font-bold transition-all hover:bg-muted/50">
+                          <SelectValue placeholder="Select channel" />
+                        </SelectTrigger>
+                        <SelectContent className="rounded-[24px] border-border shadow-2xl p-2 bg-popover/90 backdrop-blur-xl">
+                          <SelectItem value="Cold email" className="rounded-xl h-11 font-medium">Cold email</SelectItem>
+                          <SelectItem value="LinkedIn campaign" className="rounded-xl h-11 font-medium">LinkedIn campaign</SelectItem>
+                          <SelectItem value="Instagram DM" className="rounded-xl h-11 font-medium">Instagram DM</SelectItem>
+                          <SelectItem value="Phone calls" className="rounded-xl h-11 font-medium">Phone calls</SelectItem>
+                          <SelectItem value="Other" className="rounded-xl h-11 font-medium">Other</SelectItem>
+                        </SelectContent>
+                      </Select>
+                    </div>
 
-                <div className="space-y-3">
-                  <label className="text-xs font-black uppercase tracking-[0.2em] text-zinc-400">Notes & Feedback</label>
-                  <Textarea 
-                    value={note}
-                    onChange={e => setNote(e.target.value)}
-                    className="border-zinc-100 dark:border-zinc-800 bg-zinc-50/50 dark:bg-zinc-950/50 rounded-[20px] focus:ring-2 focus:ring-[#4F6EF7]/20 min-h-[120px] p-5"
-                    placeholder="Describe the outreach results..."
-                  />
-                </div>
+                    <div className="space-y-4">
+                      <label className="text-[11px] font-black uppercase tracking-[0.2em] text-zinc-500 dark:text-zinc-400 ml-1">Outreach Type</label>
+                      <div className="flex bg-muted/30 p-1.5 rounded-[20px] border border-border h-14">
+                        {(['Manual', 'Campaign'] as const).map((type) => (
+                          <button
+                            key={type}
+                            type="button"
+                            onClick={() => setOutreachType(type)}
+                            className={cn(
+                              "flex-1 rounded-[14px] text-[11px] font-black uppercase tracking-widest transition-all duration-300",
+                              outreachType === type 
+                                ? "bg-white dark:bg-zinc-800 text-zinc-900 dark:text-white shadow-lg" 
+                                : "text-zinc-500 hover:text-zinc-700 dark:hover:text-zinc-300"
+                            )}
+                          >
+                            {type}
+                          </button>
+                        ))}
+                      </div>
+                    </div>
+                  </div>
 
-                <div className="flex gap-4 pt-4">
-                  <Button variant="ghost" type="button" onClick={() => setIsLogModalOpen(false)} className="flex-1 h-14 rounded-[20px] font-bold text-zinc-500 hover:bg-zinc-100">
-                    Cancel
-                  </Button>
-                  <Button type="submit" disabled={isSubmitting} className="flex-[2] h-14 bg-[#4F6EF7] hover:bg-[#3d59d6] text-white rounded-[20px] font-black text-lg shadow-xl shadow-blue-500/20">
-                    {isSubmitting ? 'Syncing...' : 'Log outreach'}
-                  </Button>
-                </div>
-              </form>
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+                    <div className="space-y-4">
+                      <label className="text-[11px] font-black uppercase tracking-[0.2em] text-zinc-500 dark:text-zinc-400 ml-1">Total Reached</label>
+                      <div className="relative group">
+                        <Input
+                          type="number"
+                          value={count}
+                          onChange={(e) => setCount(e.target.value)}
+                          placeholder="0"
+                          className="h-14 border-border bg-muted/30 rounded-[20px] focus:ring-4 focus:ring-primary/10 font-bold text-lg pl-12 transition-all group-hover:bg-muted/50"
+                          required
+                        />
+                        <div className="absolute left-4 top-1/2 -translate-y-1/2 text-zinc-400 group-focus-within:text-primary transition-colors">
+                          <Plus className="h-5 w-5" />
+                        </div>
+                      </div>
+                    </div>
+
+                    {outreachType === 'Campaign' && (
+                      <div className="space-y-4">
+                        <label className="text-[11px] font-black uppercase tracking-[0.2em] text-zinc-500 dark:text-zinc-400 ml-1">Campaign Status</label>
+                        <Select value={campaignStatus} onValueChange={(v: any) => setCampaignStatus(v)}>
+                          <SelectTrigger className="h-14 border-border bg-muted/30 rounded-[20px] focus:ring-4 focus:ring-primary/10 font-bold transition-all hover:bg-muted/50">
+                            <SelectValue />
+                          </SelectTrigger>
+                          <SelectContent className="rounded-[24px] border-border shadow-2xl p-2 bg-popover/90 backdrop-blur-xl">
+                            <SelectItem value="Live" className="rounded-xl h-11 font-medium text-emerald-500">Live</SelectItem>
+                            <SelectItem value="Completed" className="rounded-xl h-11 font-medium text-zinc-500">Completed</SelectItem>
+                          </SelectContent>
+                        </Select>
+                      </div>
+                    )}
+                  </div>
+
+                  <div className="space-y-4">
+                    <label className="text-[11px] font-black uppercase tracking-[0.2em] text-zinc-600 dark:text-zinc-400 ml-1">Notes & Details</label>
+                    <Textarea 
+                      value={note}
+                      onChange={e => setNote(e.target.value)}
+                      className="border-border bg-muted/30 rounded-[24px] focus:ring-4 focus:ring-primary/10 min-h-[140px] p-6 text-[15px] font-medium leading-relaxed transition-all hover:bg-muted/50"
+                      placeholder="Add any specific results or feedback from this outreach..."
+                    />
+                  </div>
+
+                  <div className="flex gap-4 pt-6">
+                    <Button 
+                      type="button" 
+                      variant="ghost" 
+                      onClick={() => setIsLogModalOpen(false)}
+                      className="flex-1 h-16 rounded-[24px] font-black uppercase tracking-widest text-[11px] hover:bg-zinc-100 dark:hover:bg-zinc-800 transition-all"
+                    >
+                      Cancel
+                    </Button>
+                    <Button 
+                      type="submit" 
+                      disabled={isSubmitting} 
+                      className="flex-[2] h-16 bg-linear-to-r from-[#4F6EF7] to-[#6366F1] hover:from-[#6366F1] hover:to-[#4F6EF7] text-white rounded-[24px] font-black uppercase tracking-widest text-[11px] shadow-2xl shadow-blue-500/30 transition-all active:scale-95 disabled:opacity-50"
+                    >
+                      {isSubmitting ? 'Logging...' : 'Save Activity'}
+                    </Button>
+                  </div>
+                </form>
+              </div>
             </DialogContent>
           </Dialog>
         </div>
@@ -223,7 +348,7 @@ export function OutreachLog({ workspaceId, featureId, currentUser }: { workspace
                   </div>
                   <div className="flex-1">
                     <h3 className="font-black text-foreground text-xl leading-tight tracking-tight">{member.profiles?.full_name?.split(' ')[0] || 'Member'}</h3>
-                    <p className="text-[10px] text-muted-foreground font-black uppercase tracking-widest mt-1">Lead Outreach</p>
+                    <p className="text-[11px] text-muted-foreground font-black uppercase tracking-widest mt-1">Lead Outreach</p>
                   </div>
                 </div>
                 
@@ -252,45 +377,84 @@ export function OutreachLog({ workspaceId, featureId, currentUser }: { workspace
              <BarChart3 className="h-6 w-6 text-purple-500" /> Outreach feed
           </h2>
           <div className="space-y-6">
-            {logs.map(log => {
+            {(isLoadingLogs || isLoadingMembers) && !logsData ? (
+              <LogSkeleton rows={3} />
+            ) : (
+            logs.map(log => {
               const color = getMemberColor(log.member_id)
+              const firstName = log.profiles?.full_name?.split(' ')[0] || 'Member'
               return (
-                <div key={log.id} className="bg-card p-8 rounded-[32px] border border-border shadow-sm hover:shadow-md transition-all flex gap-8 group">
-                  <div className="flex flex-col items-center">
-                    <Avatar className="h-16 w-16 border-4 border-white dark:border-zinc-800 shadow-md">
-                      <AvatarFallback className="text-white font-black text-lg" style={{ backgroundColor: color }}>
-                        {log.profiles?.full_name?.[0] || 'U'}
-                      </AvatarFallback>
-                    </Avatar>
-                    <div className="w-[2px] flex-1 bg-zinc-50 dark:bg-zinc-800/50 mt-4 rounded-full" />
-                  </div>
-                  <div className="flex-1">
-                    <div className="flex items-center justify-between mb-4">
-                      <div className="flex items-center gap-3">
-                        <h4 className="font-black text-foreground text-lg tracking-tight">{log.profiles?.full_name || 'Member'}</h4>
-                        <div className="h-1.5 w-1.5 rounded-full bg-blue-500 shadow-sm" />
-                        <span className="text-[10px] text-muted-foreground font-black uppercase tracking-widest">{format(new Date(log.created_at), 'MMM d, h:mm a')}</span>
+                <div 
+                  key={log.id} 
+                  className={cn(
+                    "group p-8 rounded-[40px] transition-all cursor-pointer relative overflow-hidden active:scale-[0.98] min-h-[280px] flex flex-col justify-between",
+                    "bg-white/70 dark:bg-white/[0.03] backdrop-blur-[10px] border border-zinc-200 dark:border-white/10",
+                    "shadow-xl shadow-black/5 dark:shadow-[0_10px_30px_-15px_rgba(0,0,0,0.5)]"
+                  )}
+                >
+                    {/* Header Row: Member on left, Status on right */}
+                    <div className="flex items-center justify-between mb-6">
+                      <div className="flex items-center gap-2">
+                        <Avatar className="h-6 w-6 border border-zinc-200/50 dark:border-white/10 shadow-sm">
+                          <AvatarFallback className="text-[10px] font-bold text-white" style={{ backgroundColor: color }}>
+                            {firstName[0]}
+                          </AvatarFallback>
+                        </Avatar>
+                        <span className="text-[13px] font-bold text-zinc-900 dark:text-white tracking-tight">{log.profiles?.full_name?.split(' ')[0] || 'Member'}</span>
                       </div>
+                      {log.outreach_type === 'Campaign' && (
+                        <div className={cn(
+                          "px-3 py-1 rounded-full text-[10px] font-bold uppercase tracking-widest",
+                          log.campaign_status === 'Live' 
+                            ? "bg-emerald-500/10 text-emerald-500 animate-pulse" 
+                            : "bg-zinc-500/10 text-zinc-500"
+                        )}>
+                          {log.campaign_status || 'Live'}
+                        </div>
+                      )}
                     </div>
-                    <div className="flex items-center gap-4 mb-6">
-                      <div className="flex items-center gap-2 bg-muted/50 px-4 py-2 rounded-[16px] border border-border">
-                        {getChannelIcon(log.channel)}
-                        <span className="text-xs font-bold text-muted-foreground">{log.channel}</span>
-                      </div>
-                      <span className="text-sm font-black text-emerald-600 dark:text-emerald-400 bg-emerald-50 dark:bg-emerald-500/10 px-4 py-2 rounded-[16px] border border-emerald-100 dark:border-emerald-500/20">+{log.count} reached</span>
+
+                    {/* Content Section: Title and Channel */}
+                    <div className="space-y-1 mb-6">
+                      <h4 className="text-xl font-bold text-zinc-900 dark:text-white leading-tight tracking-tight lowercase">
+                        {log.count} reached today
+                      </h4>
+                      <p className="text-[13px] text-zinc-400 dark:text-zinc-500 font-medium lowercase">
+                        via {log.channel}
+                      </p>
                     </div>
+
+                    {/* Note/Description */}
                     {log.note && (
-                      <div className="bg-muted/30 p-6 rounded-[24px] border border-border italic text-muted-foreground text-sm leading-relaxed shadow-inner">
-                        "{log.note}"
-                      </div>
+                      <p className="text-[14px] text-zinc-700 dark:text-zinc-300 font-medium leading-normal mb-6">
+                        {log.note}
+                      </p>
                     )}
+
+                    {/* Footer Area: Divider and Date + Delete Button */}
+                    <div className="mt-auto pt-6 border-t border-zinc-200 dark:border-white/10 flex items-center justify-between">
+                      <Button 
+                        variant="ghost" 
+                        size="icon" 
+                        className="h-8 w-8 text-zinc-400 dark:text-white/20 hover:text-red-400 hover:bg-red-400/10 opacity-0 group-hover:opacity-100 transition-all rounded-xl"
+                        onClick={async (e) => {
+                          e.stopPropagation()
+                          queryClient.setQueryData(['outreach_logs', featureId], (old: OutreachLogRecord[]) => 
+                            old?.filter(l => l.id !== log.id)
+                          )
+                          await deleteOutreachLog(log.id)
+                        }}
+                      >
+                        <Plus className="h-4 w-4 rotate-45" />
+                      </Button>
+                      <span className="text-[11px] font-bold text-zinc-400 dark:text-zinc-500 uppercase tracking-widest">
+                        {format(new Date(log.created_at), 'do MMM')}
+                      </span>
+                    </div>
                   </div>
-                  <Button variant="ghost" size="icon" className="text-zinc-300 dark:text-zinc-700 hover:text-red-500 hover:bg-red-50 dark:hover:bg-red-950/30 opacity-0 group-hover:opacity-100 transition-all rounded-[12px]" onClick={() => deleteOutreachLog(log.id)}>
-                    <Plus className="rotate-45 h-6 w-6" />
-                  </Button>
-                </div>
-              )
-            })}
+                )
+              })
+            )}
           </div>
         </div>
       </div>

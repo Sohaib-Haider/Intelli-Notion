@@ -5,13 +5,14 @@ import { Plus } from 'lucide-react'
 
 export default async function DashboardPage() {
   const supabase = await createClient()
-  const { data: { user } } = await supabase.auth.getUser()
+  const [{ data: { user } }, workspaces] = await Promise.all([
+    supabase.auth.getUser(),
+    getWorkspaces()
+  ])
 
   if (!user) {
     redirect('/login')
   }
-
-  const workspaces = await getWorkspaces()
 
   if (workspaces && workspaces.length > 0) {
     redirect(`/dashboard/${workspaces[0].id}`)
@@ -25,7 +26,7 @@ export default async function DashboardPage() {
         </div>
         <h2 className="text-2xl font-bold tracking-tight">No workspaces found</h2>
         <p className="text-sm text-zinc-400">
-          You don't have any workspaces yet. Create one from the sidebar to get started.
+          You don&apos;t have any workspaces yet. Create one from the sidebar to get started.
         </p>
       </div>
     </div>
